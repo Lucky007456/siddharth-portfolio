@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useEffect, useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe,
@@ -14,9 +14,12 @@ import {
   Sparkles,
   ChevronRight,
   X,
-  Menu
+  Menu,
+  Gamepad2
 } from 'lucide-react';
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
+import NeuralGame from './components/NeuralGame';
+import CaseStudyPage from './components/CaseStudyPage';
 
 /* ==========================================================================
    PORTFOLIO DATA CONFIGURATION (Source of Truth: Uploaded Resume & Profile)
@@ -328,6 +331,70 @@ export default function App() {
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  // Hash-based zero-dependency routing for Case Studies & Play Game
+  const [route, setRoute] = useState(() => {
+    if (typeof window === 'undefined') return 'home';
+    const hash = window.location.hash.replace(/^#\/?/, '');
+    if (hash === 'game' || hash.startsWith('project/')) return hash;
+    return 'home';
+  });
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace(/^#\/?/, '');
+      if (hash === 'game' || hash.startsWith('project/')) {
+        setRoute(hash);
+      } else {
+        setRoute('home');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    window.addEventListener('popstate', handleHash);
+    return () => {
+      window.removeEventListener('hashchange', handleHash);
+      window.removeEventListener('popstate', handleHash);
+    };
+  }, []);
+
+  const navigateTo = (newRoute) => {
+    if (newRoute === 'home') {
+      if (window.location.hash.includes('game') || window.location.hash.includes('project/')) {
+        window.history.pushState(null, '', window.location.pathname);
+      }
+      setRoute('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.location.hash = `#${newRoute}`;
+      setRoute(newRoute);
+    }
+  };
+
+  // Passive, ultra-smooth 60 FPS scroll progress indicator (zero React re-render overhead)
+  const progressBarRef = useRef(null);
+  useEffect(() => {
+    if (route !== 'home') return;
+    let rafId = null;
+    const handleScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        const el = progressBarRef.current;
+        if (el) {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = scrollHeight > 0 ? Math.min(Math.max(scrollTop / scrollHeight, 0), 1) : 0;
+          el.style.transform = `scaleX(${progress})`;
+        }
+        rafId = null;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [route]);
+
   // Live time ticker for Chennai, India (IST)
   const [currentTime, setCurrentTime] = useState("");
   useEffect(() => {
@@ -374,6 +441,25 @@ export default function App() {
     showToast("Opening your email client to dispatch the message.");
   };
 
+  // ROUTE 1: PLAYABLE ARCADE GAME VIEW
+  if (route === 'game') {
+    return <NeuralGame onExit={() => navigateTo('home')} />;
+  }
+
+  // ROUTE 2: DEDICATED CASE STUDY DEEP DIVE VIEW
+  if (route.startsWith('project/')) {
+    const pid = route.replace(/^project\//, '');
+    const currentProject = SELECTED_PROJECTS.find(p => p.id === pid) || SELECTED_PROJECTS[0];
+    return (
+      <CaseStudyPage
+        project={currentProject}
+        allProjects={SELECTED_PROJECTS}
+        onBack={() => navigateTo('home')}
+        onSelectProject={(nextP) => navigateTo(`project/${nextP.id}`)}
+      />
+    );
+  }
+
   return (
     <LoadingOverlay
       key={loaderKey}
@@ -381,8 +467,18 @@ export default function App() {
       brandTitle="SIDDHARTH P."
       brandSubtitle="AI & DATA SCIENCE SPECIALIST"
     >
+      {/* Zero-Lag Passive Top Scroll Progress Indicator */}
+      <div className="j-scroll-progress-line" ref={progressBarRef} aria-hidden="true" />
+
       {/* Film Grain Texture Overlay */}
       <div className="grain" aria-hidden="true" />
+
+      {/* Floating Side Editorial Badge (Jithin RP Inspired) */}
+      <aside className="j-side-badge" aria-hidden="true">
+        <div className="j-side-badge-inner">
+          <span>AI & SYSTEMS ENGINEERING • CHENNAI</span>
+        </div>
+      </aside>
 
       {/* ====================================================================
           HEADER / MINIMAL NAVIGATION (JITHIN RP STYLE)
@@ -400,6 +496,14 @@ export default function App() {
             <nav className="j-nav-links" aria-label="Main Navigation">
               <a href="#works" className="j-nav-link">Selected Works</a>
               <a href="#pillars" className="j-nav-link">Capabilities</a>
+              <button
+                onClick={() => navigateTo('game')}
+                className="j-nav-game-pill"
+                title="Play Synapse Runner Minigame"
+              >
+                <Gamepad2 size={13} color="#38bdf8" />
+                <span>Play Game</span>
+              </button>
               <a href="#about" className="j-nav-link">About</a>
               <a href="#credentials" className="j-nav-link">Credentials</a>
               <a href="#contact" className="j-nav-link">Contact</a>
@@ -461,6 +565,17 @@ export default function App() {
               <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
                 <a href="#works" onClick={() => setMobileMenuOpen(false)}>Selected Works</a>
                 <a href="#pillars" onClick={() => setMobileMenuOpen(false)}>Capabilities</a>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigateTo('game');
+                  }}
+                  className="j-nav-game-pill"
+                  style={{ alignSelf: 'flex-start', padding: '0.45rem 1rem', fontSize: '0.85rem' }}
+                >
+                  <Gamepad2 size={15} color="#38bdf8" />
+                  <span>Play Game (Synapse Runner)</span>
+                </button>
                 <a href="#about" onClick={() => setMobileMenuOpen(false)}>About & Education</a>
                 <a href="#credentials" onClick={() => setMobileMenuOpen(false)}>Credentials</a>
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
@@ -529,6 +644,14 @@ export default function App() {
             </div>
 
             <div className="j-hero-bar-right">
+              <button
+                onClick={() => navigateTo('game')}
+                className="j-btn-outline"
+                style={{ borderColor: 'rgba(56, 189, 248, 0.4)', background: 'rgba(56, 189, 248, 0.05)' }}
+                title="Launch Synapse Protocol Mini-Game"
+              >
+                <Gamepad2 size={14} color="#38bdf8" /> Play Synapse Runner
+              </button>
               <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
                 <Code2 size={14} /> GitHub ↗
               </a>
@@ -676,7 +799,7 @@ export default function App() {
 
                     <div className="j-work-actions">
                       <button
-                        onClick={() => setActiveProjectModal(proj)}
+                        onClick={() => navigateTo(`project/${proj.id}`)}
                         className="j-btn-cta"
                       >
                         Explore Case Study <ChevronRight size={15} />
@@ -1001,6 +1124,13 @@ export default function App() {
             <div className="j-footer-links">
               <a href="#works" className="j-footer-link">Works</a>
               <a href="#pillars" className="j-footer-link">Capabilities</a>
+              <button
+                onClick={() => navigateTo('game')}
+                className="j-footer-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Play Game
+              </button>
               <a href="#about" className="j-footer-link">About</a>
               <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" className="j-footer-link">Résumé</a>
               <button

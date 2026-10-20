@@ -921,6 +921,78 @@ button {
 }
 
 /* ==========================================================================
+   SCROLL PROGRESS BAR & FLOATING SIDE BADGE
+   ========================================================================== */
+.j-scroll-progress-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--accent), #38bdf8);
+  z-index: 99999;
+  transform-origin: 0% 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+  transition: transform 0.05s linear;
+}
+
+.j-side-badge {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  pointer-events: none;
+  writing-mode: vertical-rl;
+  display: flex;
+  align-items: center;
+}
+
+.j-side-badge-inner {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  color: var(--muted-2);
+  text-transform: uppercase;
+  background: rgba(14, 14, 18, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  padding: 1.25rem 0.45rem;
+  border-radius: var(--rounded-full);
+}
+
+.j-nav-game-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--rounded-full);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.08);
+  color: #f8fafc;
+  font-size: 0.775rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.j-nav-game-pill:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.j-next-project-card:hover {
+  border-color: var(--accent) !important;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
    RESPONSIVE DESIGN BREAKPOINTS
    ========================================================================== */
 @media (max-width: 1024px) {
