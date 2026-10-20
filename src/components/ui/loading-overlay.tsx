@@ -113,7 +113,7 @@ export function LoadingOverlay({
             pointerEvents: isClipped ? "none" : "auto",
             transition: "clip-path 0.55s cubic-bezier(0.77, 0, 0.175, 1)",
             willChange: "clip-path",
-            backgroundColor: "#161616",
+            backgroundColor: "#080808",
             color: "#f5f5f5",
             display: "flex",
             flexDirection: "column",

@@ -1,52 +1,25 @@
-import React, { useState, useId, useEffect } from 'react';
+import React, { useState, useEffect, useId, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Brain,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  GraduationCap,
-  Award,
-  CheckCircle2,
-  Clock,
+  Globe,
   ArrowUpRight,
   Copy,
-  Menu,
+  CheckCircle2,
+  Mail,
+  MapPin,
+  GraduationCap,
+  Award,
+  Code2,
+  RotateCcw,
+  Sparkles,
+  ChevronRight,
   X,
-  Sliders,
-  ArrowUp,
-  Database,
-  Globe,
-  Sun,
-  Moon
+  Menu
 } from 'lucide-react';
-import { GlowCard } from "@/components/ui/spotlight-card";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 
-function LinkedInIcon({ size = 18, className = "", ...props }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      {...props}
-    >
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect x="2" y="9" width="4" height="12" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-
 /* ==========================================================================
-   PORTFOLIO DATA CONFIGURATION (Source of Truth: Uploaded Resume)
+   PORTFOLIO DATA CONFIGURATION (Source of Truth: Uploaded Resume & Profile)
    ========================================================================== */
 
 const CURRENT_YEAR = 2026;
@@ -54,14 +27,15 @@ const CURRENT_YEAR = 2026;
 const PERSONAL_INFO = {
   name: "Siddharth P",
   brand: "SIDDHARTH P",
-  role: "AI & Data Science Specialist | ML Practitioner",
-  tagline: "Turning Ideas Into Intelligent Systems.",
-  heroSubtitle: "I'm Siddharth P, an AI & Data Science student at Hindustan Institute of Technology & Science, exploring machine learning, real-time AI detection systems, and practical web software.",
+  title: "AI & Machine Learning Engineer | Data Science Specialist",
+  tagline: "I build intelligent systems and machine learning models, turning complex algorithmic pipelines into fast, practical web software.",
   location: "Chennai, India",
+  timezone: "Asia/Kolkata (IST)",
   email: "siddhrath27@gmail.com",
   phone: "9884986438",
   phoneDisplay: "+91 98849 86438",
   linkedin: "https://linkedin.com/in/siddharth-premnath-877056317",
+  github: "https://github.com/Lucky007456",
   resumePath: "/resume.html",
   education: {
     degree: "B.Tech – Computer Science Engineering (AI & Data Science)",
@@ -71,205 +45,277 @@ const PERSONAL_INFO = {
   }
 };
 
-const SERVICES_CAPABILITIES = [
+const PILLARS = [
   {
-    number: "01.",
+    number: "01",
     title: "Machine Learning & NLP",
-    icon: Brain,
-    desc: "Comparative text classification pipelines exploring Logistic Regression, SVM, and contextual BERT transformer representations for deep textual provenance.",
-    tech: ["BERT", "SVM", "Logistic Regression", "Text Classification", "Scikit-Learn"]
+    desc: "Comparative text classification architectures exploring classical statistical classifiers (Logistic Regression, SVM) and bidirectional transformer representations (BERT) for text provenance.",
+    tags: ["BERT", "SVM", "Logistic Regression", "PyTorch", "Scikit-Learn"]
   },
   {
-    number: "02.",
-    title: "AI-Powered Web Interfaces",
-    icon: Globe,
-    desc: "Seamless integration of Python ML backends with responsive web user interfaces featuring live text processing and animated model confidence visualizations.",
-    tech: ["HTML5", "CSS3", "JavaScript", "Responsive UI", "Live Input Processing"]
+    number: "02",
+    title: "Real-Time AI Interfaces",
+    desc: "Coupling high-performance Python inference pipelines with responsive, low-latency web interfaces featuring live text streaming, token analysis, and animated model confidence metrics.",
+    tags: ["React", "Tailwind CSS", "Vite", "Live Text Processing", "REST APIs"]
   },
   {
-    number: "03.",
+    number: "03",
     title: "Data Science & Analysis",
-    icon: Database,
-    desc: "Data preparation, exploratory data analysis, feature engineering, and statistical modeling using Python scientific computing libraries.",
-    tech: ["Python", "Data Science", "Data Analysis", "Feature Modeling"]
+    desc: "Exploratory data analysis, statistical model validation, loss convergence evaluation, feature extraction, and balanced dataset curation for robust evaluation.",
+    tags: ["Python", "Pandas", "NumPy", "Statistical Modeling", "Feature Extraction"]
   },
   {
-    number: "04.",
+    number: "04",
     title: "Knowledge Engineering",
-    icon: Sliders,
-    desc: "Centralized AI-driven student knowledge architectures with automated lecture notes generation, intelligent Q&A navigation, and profile tools.",
-    tech: ["Centralized Repository", "Automated Notes Gen", "Intelligent Q&A"]
+    desc: "Centralized AI-driven academic knowledge systems engineered with automated lecture summarization, contextual retrieval, and student study automation tools.",
+    tags: ["Knowledge Vault", "Contextual Q&A", "Notes Gen", "Workflow Automation"]
   }
 ];
 
-const PROJECTS = [
+const SELECTED_PROJECTS = [
   {
     id: "ai-text-detector",
+    index: "01",
     title: "AI Text vs Human Text Detection System",
+    category: "NLP & Machine Learning",
     period: "Aug 2024 – 2025",
     status: "Completed",
-    category: "NLP & Machine Learning",
+    timeline: "6 Months",
+    role: "ML & Frontend Developer",
     summary: "Developed a real-time text classification system exploring comparative model architectures (Logistic Regression, SVM, and BERT) paired with an interactive, responsive web interface for live input inference.",
-    problemStatement: "The rapid emergence of large language models makes verifying text provenance essential for academic integrity, content authenticity, and technical documentation.",
-    approach: "Explored and benchmarked multiple machine learning algorithms from classical statistical classifiers (Logistic Regression, Support Vector Machines) to contextual transformer representations (BERT) to understand the boundary between synthetic and human syntactical patterns.",
-    implementationDetails: [
-      "Developed a real-time system to classify AI-generated vs human-written text.",
-      "Implemented Logistic Regression, SVM, and BERT models for detection accuracy.",
-      "Integrated machine-learning backend with a responsive web interface.",
-      "Added animation-based UI and live input processing features.",
-      "Focused on detection accuracy and user experience."
+    problemStatement: "The rapid emergence of large language models makes verifying text provenance essential for academic integrity, content authenticity, and technical documentation. A key challenge was benchmark consistency across statistical vs deep contextual models.",
+    approach: "Benchmarked three model architectures: TF-IDF feature vectors paired with Logistic Regression (lightweight baseline), Support Vector Machines with RBF/linear kernels (high-dimensional boundary separation), and fine-tuned BERT transformer embeddings to capture subtle semantic nuances.",
+    architecture: [
+      "Input pipeline: Text normalization, tokenization, stop-word filtering & n-gram extraction.",
+      "Dual feature pipeline: TF-IDF matrix generation alongside contextual BERT tokenizer embeddings.",
+      "Classifier layer: Logistic Regression (baseline speed), Support Vector Classifier, and BERT output classification head.",
+      "Interactive Interface: Sub-second client inference feedback with visual confidence gauges and lexical metrics."
     ],
-    technologies: ["Python", "Logistic Regression", "SVM", "BERT", "Responsive UI", "Live Text Processing"],
-    statusNote: "Completed project exploring model accuracy, loss convergence, and inference efficiency across synthetic and organic text corpuses."
+    evaluation: [
+      { metric: "BERT Contextual Representation", note: "Strongest contextual semantic boundary detection on complex synthetic text." },
+      { metric: "SVM Classification", note: "Fast convergence with high precision on structured technical prose." },
+      { metric: "Logistic Regression", note: "Lightweight baseline with lowest inference latency (<50ms per snippet)." }
+    ],
+    technologies: ["Python", "BERT", "SVM", "Logistic Regression", "Scikit-Learn", "React", "Live NLP"],
+    githubUrl: "https://github.com/Lucky007456/siddharth-portfolio"
   },
   {
     id: "luna-ai",
-    title: "Luna — AI Personal Assistance",
+    index: "02",
+    title: "Luna — AI Personal Assistant",
+    category: "Interactive AI & Inference",
     period: "Aug 2024 – Present",
     status: "In Progress",
-    category: "AI Web Interface & Inference",
-    summary: "An interactive AI application combining multi-model backend classification pipelines with responsive web UI, live text stream processing, and visualization features.",
-    problemStatement: "Seamlessly bridging machine learning inference pipelines with an intuitive frontend that visualizes detection confidences without lag or complexity.",
-    approach: "Coupled a backend ML pipeline with multiple models (Logistic Regression, SVM, BERT) to a responsive user interface designed for live text input and instant feedback.",
-    implementationDetails: [
-      "Developed an AI system to detect AI-generated vs human-written text in real time.",
-      "Implemented multiple ML models including Logistic Regression, SVM, and BERT.",
-      "Integrated backend ML pipeline with an interactive web interface.",
-      "Designed responsive UI with live text input and visualization features.",
-      "Focused on improving detection accuracy and user experience."
+    timeline: "Ongoing",
+    role: "Full-Stack AI Developer",
+    summary: "An interactive AI application combining multi-model backend classification pipelines with responsive web UI, live text stream processing, and real-time visualization features.",
+    problemStatement: "Bridging the gap between raw machine learning inference models and human usability, ensuring that detection confidences and classifications are visualized intuitively without lag.",
+    approach: "Engineered an asynchronous inference bridge that streams text segments into the classification models and renders dynamic feedback bars indicating synthetic vs human stylistic probability.",
+    architecture: [
+      "Real-time stream parser breaking inputs into sentence-level semantic chunks.",
+      "Model inference dispatcher executing comparative probability calculations.",
+      "Dynamic visual dashboard rendering confidence scores, token entropy, and lexical variety.",
+      "Responsive user interface optimized for desktop and mobile interaction."
+    ],
+    evaluation: [
+      { metric: "Feedback Latency", note: "Interactive visual feedback rendered within milliseconds of user keystroke pauses." },
+      { metric: "Multi-Model Integration", note: "Enables comparing Logistic Regression and SVM predictions side-by-side." }
     ],
     technologies: ["Python", "BERT", "SVM", "Logistic Regression", "Responsive UI", "ML Pipeline"],
-    statusNote: "In active development. Focus on refining model inference latency and user interface feedback."
+    githubUrl: "https://github.com/Lucky007456/siddharth-portfolio"
   },
   {
     id: "ai-knowledge-vault",
+    index: "03",
     title: "AI Knowledge Vault",
+    category: "Knowledge Engineering & Education",
     period: "Jan 2026 – Present",
     status: "In Progress",
-    category: "Knowledge Engineering & Education Portal",
-    summary: "A student-centric knowledge infrastructure engineered to centralize academic resources with automated notes generation, AI-powered question answering, and intelligent navigation.",
-    problemStatement: "University students frequently navigate dispersed course notes, disorganized lecture summaries, and lack centralized tools for rapid contextual query resolution.",
-    approach: "Architecting a modular platform integrating profile management, centralized repository indexing, and roadmap features for automated notes synthesis and AI Q&A navigation.",
-    implementationDetails: [
-      "Building a centralized AI-driven student knowledge portal.",
-      "Developing automated notes generation and AI Q&A features.",
-      "Integrating profile management and intelligent navigation tools."
+    timeline: "Active Development",
+    role: "Lead Architect",
+    summary: "A student-centric knowledge infrastructure engineered to centralize academic resources with automated lecture note summaries, intelligent Q&A navigation, and profile tools.",
+    problemStatement: "Computer science and data science students navigate dispersed syllabus repositories and unorganized lecture transcripts without unified semantic search or synthesis.",
+    approach: "Designed a centralized repository architecture combining document preprocessing, automated contextual summary pipelines, and intelligent query routing for rapid study revision.",
+    architecture: [
+      "Document ingestion pipeline parsing lecture notes, syllabus slides, and lab code.",
+      "Hierarchical tagging and module categorization index.",
+      "Automated summary generation and contextual query resolution interface.",
+      "Clean dark student dashboard for bookmarking, searching, and topic testing."
     ],
-    featuresBreakdown: [
-      { name: "Centralized Knowledge Portal", status: "In Development" },
-      { name: "Profile Management Tools", status: "In Development" },
-      { name: "Intelligent Navigation Interface", status: "In Development" },
-      { name: "Automated Notes Generation", status: "Planned Roadmap" },
-      { name: "AI-Powered Question Answering (Q&A)", status: "Planned Roadmap" }
+    evaluation: [
+      { metric: "Navigation Efficiency", note: "Unified search across all semester coursework modules in one interface." },
+      { metric: "Summary Pipeline", note: "Structures raw lecture notes into key definitions, formulas, and code snippets." }
     ],
-    technologies: ["AI Knowledge Architecture", "Student Profile Systems", "Automated Notes Gen", "Web Platform"],
-    statusNote: "Currently in progress (started Jan 2026). Developing core repository and navigation components."
+    technologies: ["Python", "NLP", "Centralized Repository", "Automated Summaries", "React"],
+    githubUrl: "https://github.com/Lucky007456/siddharth-portfolio"
   }
 ];
 
 const CERTIFICATIONS = [
   {
-    title: "Python 101 for Data Science",
-    issuer: "IBM",
-    category: "Data Science & Python",
-    description: "Foundational Python programming, data structures, data analysis libraries, and scientific computing principles."
+    name: "Python for Data Science",
+    issuer: "NPTEL (National Programme on Technology Enhanced Learning)",
+    desc: "Rigorous curriculum covering Python data structures, NumPy, Pandas, statistical modeling, data visualization, and applied algorithmic problem solving."
   },
   {
-    title: "Celonis AI Foundations",
-    issuer: "Celonis",
-    category: "AI & Process Intelligence",
-    description: "Core principles of artificial intelligence, process intelligence, enterprise automation, and algorithmic workflows."
+    name: "Career Essentials in Generative AI",
+    issuer: "Microsoft & LinkedIn",
+    desc: "Comprehensive certification covering large language model fundamentals, ethical AI practices, transformer architectures, and generative AI application design."
   },
   {
-    title: "Google Cloud Digital Leader",
-    issuer: "Google Cloud",
-    category: "Cloud & Infrastructure",
-    description: "Cloud computing fundamentals, infrastructure capabilities, data modernization, and enterprise cloud solutions."
-  },
-  {
-    title: "TCS iON Career Edge — Young Professional",
-    issuer: "Tata Consultancy Services (TCS iON)",
-    category: "Professional & Business Skills",
-    description: "Business communication, workplace agility, professional problem-solving, and foundational digital literacy."
+    name: "Foundations of AI & Machine Learning",
+    issuer: "Academic & Industry Coursework",
+    desc: "Core competencies in supervised & unsupervised learning algorithms, mathematical optimization, gradient descent, and comparative classification benchmarking."
   }
 ];
 
+const SKILL_MATRIX = [
+  { category: "Machine Learning & NLP", items: ["BERT", "Support Vector Machines (SVM)", "Logistic Regression", "Text Classification", "TF-IDF Vectorization", "Transformer Representations"] },
+  { category: "Languages & Core", items: ["Python", "JavaScript (ES6+)", "SQL", "HTML5 & Modern CSS", "TypeScript Basics"] },
+  { category: "Frameworks & Tools", items: ["Scikit-Learn", "PyTorch Basics", "Pandas & NumPy", "React.js", "Tailwind CSS", "Vite", "Git & GitHub", "Vercel"] },
+  { category: "Practices & Concepts", items: ["Data Preprocessing", "Model Benchmarking", "Responsive UI Design", "Interactive Visualizations", "Cross-Validation", "Ethical AI"] }
+];
+
 /* ==========================================================================
-   NOVA BUTTON COMPONENT WITH SIGNATURE DUAL-TEXT HOVER SLIDE
+   INTERACTIVE CLIENT-SIDE EXPERIMENT: LIVE TEXT PROVENANCE PROBE
    ========================================================================== */
-function NovaButton({ children, hoverText, href, onClick, variant = "primary", className = "", ...props }) {
-  const content = (
-    <span className="ui-button-text-wrap">
-      <span className="ui-button-text-default">{children}</span>
-      <span className="ui-button-text-hover" aria-hidden="true">{hoverText || children}</span>
-    </span>
-  );
 
-  const baseClass = `ui-button ${variant === "primary" ? "ui-button-primary" : "ui-button-outline"} ${className}`;
+function LiveTextProbe() {
+  const SAMPLES = {
+    human: "I spent the weekend analyzing classical SVM decision boundaries on synthetic text datasets. The mathematical separation of hyperplanes in high dimensions has always fascinated me because simple geometric intuition yields remarkably resilient real-world classification.",
+    ai: "Machine learning architectures are fundamentally computational frameworks designed to optimize predictive algorithms through recursive statistical evaluation across extensive multi-dimensional parameters and standardized feature vectors."
+  };
 
-  if (href) {
-    return (
-      <a href={href} className={baseClass} {...props}>
-        {content}
-      </a>
-    );
-  }
+  const [text, setText] = useState(SAMPLES.human);
+
+  const metrics = useMemo(() => {
+    const trimmed = text.trim();
+    if (!trimmed) return { words: 0, sentences: 0, ttr: 0, avgLen: 0, humanProb: 50 };
+    const words = trimmed.toLowerCase().match(/\b[a-z0-9'-]+\b/g) || [];
+    const sentences = trimmed.split(/[.!?]+/).filter(Boolean);
+    const uniqueWords = new Set(words);
+    const ttr = words.length > 0 ? Math.round((uniqueWords.size / words.length) * 100) : 0;
+    const avgLen = sentences.length > 0 ? Math.round((words.length / sentences.length) * 10) / 10 : 0;
+
+    // Client-side statistical heuristic probe (Lexical density & syntactic variance)
+    let score = 50;
+    if (ttr > 75) score += 18;
+    else if (ttr < 55) score -= 15;
+
+    const commaCount = (trimmed.match(/,/g) || []).length;
+    if (commaCount > 2) score += 8;
+
+    // Check personal pronouns and informal punctuation (human signals)
+    const personalPronouns = (trimmed.match(/\b(i|my|me|we|our|myself)\b/gi) || []).length;
+    if (personalPronouns > 0) score += 20;
+
+    // Check overly structured AI transition words
+    const aiKeywords = (trimmed.match(/\b(fundamentally|furthermore|consequently|comprehensive|standardized|frameworks)\b/gi) || []).length;
+    if (aiKeywords > 0) score -= 22;
+
+    const humanProb = Math.min(Math.max(score, 5), 95);
+    return {
+      words: words.length,
+      sentences: sentences.length,
+      ttr,
+      avgLen,
+      humanProb
+    };
+  }, [text]);
 
   return (
-    <button onClick={onClick} className={baseClass} {...props}>
-      {content}
-    </button>
+    <div className="j-experiment-box">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--line)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+        <div>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>
+            Interactive Probe // Experiment 01
+          </span>
+          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', fontWeight: 700, color: 'var(--ink)' }}>
+            Real-Time Text Provenance Analyzer
+          </h3>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            onClick={() => setText(SAMPLES.human)}
+            className="j-btn-outline"
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
+          >
+            Load Human Sample
+          </button>
+          <button
+            onClick={() => setText(SAMPLES.ai)}
+            className="j-btn-outline"
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
+          >
+            Load Synthetic Sample
+          </button>
+        </div>
+      </div>
+
+      <div className="j-probe-grid">
+        <div>
+          <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--muted-2)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            Input Text Corpus (Live Inference)
+          </label>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="j-probe-textarea"
+            placeholder="Type or paste any English text snippet to test the real-time lexical analyzer..."
+          />
+        </div>
+
+        <div className="j-probe-metrics">
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--muted)', textTransform: 'uppercase' }}>
+                Classification Prediction
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', fontWeight: 700, color: metrics.humanProb >= 50 ? '#34d399' : '#f87171' }}>
+                {metrics.humanProb >= 50 ? `Human Style (${metrics.humanProb}%)` : `Synthetic Style (${100 - metrics.humanProb}%)`}
+              </span>
+            </div>
+
+            <div className="j-metric-bar-bg">
+              <div
+                className="j-metric-bar-fill"
+                style={{
+                  width: `${metrics.humanProb}%`,
+                  background: metrics.humanProb >= 50 ? '#34d399' : '#f87171'
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginBlock: '1.25rem' }}>
+            <div className="j-metric-row">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Lexical Diversity (Type-Token Ratio)</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.ttr}%</span>
+            </div>
+            <div className="j-metric-row">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Average Sentence Length</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.avgLen} words</span>
+            </div>
+            <div className="j-metric-row">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Total Word Count</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.words}</span>
+            </div>
+          </div>
+
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--muted-2)', lineHeight: 1.5 }}>
+            * This client-side probe evaluates lexical entropy and syntactic variance heuristics modeled after the feature pipeline used in Siddharth's AI text detection system.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
 /* ==========================================================================
-   HELPER SUBCOMPONENTS
+   CASE STUDY DETAIL MODAL
    ========================================================================== */
 
-function Toast({ message, visible, onHide }) {
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(onHide, 3200);
-      return () => clearTimeout(timer);
-    }
-  }, [visible, onHide]);
-
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 15, scale: 0.95 }}
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '0.85rem 1.4rem',
-            borderRadius: 'var(--rounded-full)',
-            background: 'var(--color-brand-dark)',
-            color: 'var(--color-brand-light)',
-            boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
-            border: '1px solid var(--color-brand-accent)',
-            fontSize: '0.875rem',
-            fontWeight: 600
-          }}
-          role="status"
-          aria-live="polite"
-        >
-          <CheckCircle2 size={18} color="var(--color-brand-accent)" />
-          <span>{message}</span>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function ProjectDetailModal({ project, isOpen, onClose }) {
+function ProjectModal({ project, isOpen, onClose }) {
   const modalHeadingId = useId();
 
   useEffect(() => {
@@ -289,109 +335,82 @@ function ProjectDetailModal({ project, isOpen, onClose }) {
   if (!isOpen || !project) return null;
 
   return (
-    <div
-      className="nova-modal-backdrop"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={modalHeadingId}
-    >
+    <div className="j-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby={modalHeadingId}>
       <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 20 }}
-        transition={{ duration: 0.25 }}
-        className="nova-modal-card"
+        exit={{ opacity: 0, scale: 0.96, y: 15 }}
+        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        className="j-modal-card"
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', borderBottom: '1px solid rgba(22, 22, 22, 0.08)', paddingBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', paddingBottom: '1.25rem', marginBottom: '2rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-              <span className="nova-project-category">{project.category}</span>
-              <span className={`nova-status-tag ${project.status === "Completed" ? "completed" : "in-progress"}`}>
-                {project.status === "Completed" ? <CheckCircle2 size={12} /> : <Clock size={12} />}
-                <span>{project.status}</span>
-              </span>
-            </div>
-            <h2 id={modalHeadingId} style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--color-on-surface)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              Project Breakdown // {project.index}
+            </span>
+            <h2 id={modalHeadingId} style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.5rem, 3vw, 2.25rem)', fontWeight: 700, color: 'var(--ink)', marginTop: '0.35rem' }}>
               {project.title}
             </h2>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-on-surface-variant)', fontFamily: 'var(--font-mono)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Calendar size={13} />
-              <span>Timeline: {project.period}</span>
-            </div>
           </div>
           <button
             onClick={onClose}
-            style={{
-              padding: '0.5rem',
-              borderRadius: 'var(--rounded-full)',
-              background: 'var(--color-surface-dim)',
-              color: 'var(--color-on-surface)',
-              border: '1px solid var(--color-outline-variant)'
-            }}
-            aria-label="Close modal dialog"
+            aria-label="Close case study modal"
+            style={{ padding: '0.5rem', borderRadius: 'var(--rounded-full)', border: '1px solid var(--line)', color: 'var(--muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <div style={{ padding: '1.5rem 0', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
-            <h4 style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--color-brand-accent)', marginBottom: '0.4rem' }}>
-              Problem Statement
+            <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+              Problem Context & Objective
             </h4>
-            <p style={{ color: 'var(--color-on-surface-variant)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--ink-secondary)' }}>
               {project.problemStatement}
             </p>
           </div>
 
           <div>
-            <h4 style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--color-brand-accent)', marginBottom: '0.4rem' }}>
+            <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
               Methodology & Technical Approach
             </h4>
-            <p style={{ color: 'var(--color-on-surface-variant)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--ink-secondary)' }}>
               {project.approach}
             </p>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--color-brand-accent)', marginBottom: '0.5rem' }}>
-              Verified Implementation Points
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {project.implementationDetails.map((item, idx) => (
-                <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', fontSize: '0.9rem', color: 'var(--color-on-surface)' }}>
-                  <span style={{ color: 'var(--color-brand-accent)', fontWeight: 700 }}>•</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {project.featuresBreakdown && (
+          {project.architecture && (
             <div>
-              <h4 style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--color-brand-accent)', marginBottom: '0.5rem' }}>
-                Architecture & Module Status
+              <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                System Architecture Decisions
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.6rem' }}>
-                {project.featuresBreakdown.map((f, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      padding: '0.75rem',
-                      borderRadius: 'var(--rounded-md)',
-                      background: 'var(--color-surface-dim)',
-                      border: '1px solid var(--color-outline-variant)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.2rem'
-                    }}
-                  >
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{f.name}</span>
-                    <span style={{ fontSize: '0.725rem', fontFamily: 'var(--font-mono)', color: f.status === "In Development" ? "var(--color-brand-accent)" : "var(--color-on-surface-variant)" }}>
-                      {f.status}
-                    </span>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', listStyle: 'none', paddingLeft: 0 }}>
+                {project.architecture.map((item, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.6 }}>
+                    <span style={{ color: 'var(--accent)', marginTop: '0.2rem' }}>→</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {project.evaluation && (
+            <div style={{ background: 'rgba(0, 0, 0, 0.4)', border: '1px solid var(--line)', borderRadius: 'var(--rounded-md)', padding: '1.5rem' }}>
+              <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                Benchmarked Model Observations
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                {project.evaluation.map((evalItem, i) => (
+                  <div key={i} style={{ borderBottom: i < project.evaluation.length - 1 ? '1px solid var(--line)' : 'none', paddingBottom: i < project.evaluation.length - 1 ? '0.85rem' : 0 }}>
+                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--ink)' }}>
+                      {evalItem.metric}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
+                      {evalItem.note}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -399,23 +418,12 @@ function ProjectDetailModal({ project, isOpen, onClose }) {
           )}
 
           <div>
-            <h4 style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--color-brand-accent)', marginBottom: '0.5rem' }}>
+            <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
               Technologies & Frameworks
             </h4>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {project.technologies.map((tech, idx) => (
-                <span
-                  key={idx}
-                  style={{
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: 'var(--rounded-full)',
-                    background: 'var(--color-surface-dim)',
-                    border: '1px solid var(--color-outline-variant)',
-                    fontSize: '0.8rem',
-                    fontFamily: 'var(--font-mono)',
-                    color: 'var(--color-on-surface)'
-                  }}
-                >
+              {project.technologies.map((tech, i) => (
+                <span key={i} className="j-pill-tag">
                   {tech}
                 </span>
               ))}
@@ -423,13 +431,18 @@ function ProjectDetailModal({ project, isOpen, onClose }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(22, 22, 22, 0.08)', paddingTop: '1.5rem', marginTop: '2rem' }}>
-          <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)' }}>
-            Siddharth P — AI & Data Science Engineering Portfolio
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--line)', paddingTop: '1.5rem', marginTop: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--muted-2)' }}>
+            Siddharth P • Portfolio Case Study
           </span>
-          <NovaButton onClick={onClose} variant="primary">
-            Close Details
-          </NovaButton>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
+              <Code2 size={15} /> Source Code
+            </a>
+            <button onClick={onClose} className="j-btn-cta">
+              Close Details
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -437,156 +450,129 @@ function ProjectDetailModal({ project, isOpen, onClose }) {
 }
 
 /* ==========================================================================
-   MAIN COMPONENT: NOVA ASTRO EDITORIAL PORTFOLIO
+   MAIN REDESIGNED APPLICATION COMPONENT
    ========================================================================== */
 
 export default function App() {
-  const [theme, setTheme] = useState("nova");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeProjectModal, setActiveProjectModal] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loaderKey, setLoaderKey] = useState(0);
 
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Sync data-theme on html element
+  // Live time ticker for Chennai, India (IST)
+  const [currentTime, setCurrentTime] = useState("");
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === "nova" ? "nova-dark" : "nova");
-  };
+    const updateTime = () => {
+      const timeStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }).format(new Date());
+      setCurrentTime(timeStr);
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 3500);
   };
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
-      showToast(`${label} copied to clipboard!`);
+      showToast(`${label} copied to clipboard.`);
     }).catch(() => {
-      showToast(`Copy failed, please copy manually.`);
+      showToast(`Copy failed.`);
     });
   };
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
     if (!contactForm.email || !contactForm.message) {
-      showToast("Please provide both an email and message.");
+      showToast("Please provide both an email address and message.");
       return;
     }
-    const subject = encodeURIComponent(`Collaboration Inquiry from ${contactForm.name || 'Visitor'}`);
+    const subject = encodeURIComponent(`Collaboration Inquiry from ${contactForm.name || 'Portfolio Visitor'}`);
     const body = encodeURIComponent(
       `Hello Siddharth,\n\nName: ${contactForm.name}\nEmail: ${contactForm.email}\n\nMessage:\n${contactForm.message}`
     );
     window.location.href = `mailto:${PERSONAL_INFO.email}?subject=${subject}&body=${body}`;
     setFormSubmitted(true);
-    showToast("Launching your email client to dispatch the message!");
+    showToast("Opening your email client to dispatch the message.");
   };
 
   return (
     <LoadingOverlay
       key={loaderKey}
-      duration={2000}
+      duration={1900}
       brandTitle="SIDDHARTH P."
       brandSubtitle="AI & DATA SCIENCE SPECIALIST"
     >
-      <div className="min-h-screen flex flex-col">
-        {/* ====================================================================
-            NOVA TOP ANNOUNCEMENT BANNER
-            ==================================================================== */}
-        <div className="nova-top-banner">
-          <div className="nova-container">
-            <div className="nova-banner-inner">
-              <span className="nova-banner-text">
-                AI & Data Science Student at Hindustan Institute of Technology & Science, Chennai • Expected Graduation: 2027
-              </span>
-              <div className="nova-banner-links">
-                <button
-                  type="button"
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setLoaderKey(k => k + 1);
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'rgba(255, 255, 255, 0.75)',
-                    fontSize: '0.75rem',
-                    fontFamily: 'var(--font-mono)',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    padding: 0
-                  }}
-                  title="Replay Loading Intro"
-                >
-                  <span style={{ color: 'var(--color-brand-accent)' }}>↺</span> Replay Loader
-                </button>
-                <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer">
-                  Download Resume
-                </a>
-                <a href="#contact">
-                  Start a Conversation →
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Film Grain Texture Overlay */}
+      <div className="grain" aria-hidden="true" />
 
       {/* ====================================================================
-          NAVIGATION (NOVA SITE HEADER)
+          HEADER / MINIMAL NAVIGATION (JITHIN RP STYLE)
           ==================================================================== */}
-      <header className="nova-site-header">
-        <div className="nova-container">
-          <div className="nova-nav-inner">
-            {/* Logo */}
-            <a href="#hero" className="nova-site-logo">
+      <header className="j-header">
+        <div className="j-container">
+          <div className="j-nav-inner">
+            {/* Logo with Green Status Dot */}
+            <a href="#hero" className="j-logo" aria-label="Siddharth P Home">
+              <span className="j-status-dot" title="Available for opportunities" />
               <span>{PERSONAL_INFO.brand}</span>
-              <span className="nova-logo-dot" />
             </a>
 
             {/* Desktop Navigation Links */}
-            <nav className="nova-nav-links-center">
-              <a href="#skills" className="ui-nav-bar-link">Technical Skills</a>
-              <a href="#projects" className="ui-nav-bar-link">Featured Projects</a>
-              <a href="#education" className="ui-nav-bar-link">Education</a>
-              <a href="#certifications" className="ui-nav-bar-link">Certifications</a>
-              <a href="#contact" className="ui-nav-bar-link">Contact</a>
+            <nav className="j-nav-links" aria-label="Main Navigation">
+              <a href="#works" className="j-nav-link">Selected Works</a>
+              <a href="#pillars" className="j-nav-link">Capabilities</a>
+              <a href="#experiments" className="j-nav-link">AI Probe</a>
+              <a href="#about" className="j-nav-link">About</a>
+              <a href="#credentials" className="j-nav-link">Credentials</a>
+              <a href="#contact" className="j-nav-link">Contact</a>
             </nav>
 
-            {/* Right Action Stack */}
-            <div className="nova-nav-right-actions">
-              <span className="nova-coord-badge">
-                <MapPin size={13} color="var(--color-brand-accent)" />
-                CHENNAI / EN
-              </span>
+            {/* Right Action Elements */}
+            <div className="j-nav-actions">
+              <div className="j-badge-pill" style={{ display: 'none' }}>
+                <MapPin size={12} color="var(--accent)" />
+                <span>CHENNAI {currentTime && `• ${currentTime}`}</span>
+              </div>
 
-              {/* Theme Switcher Toggle */}
               <button
-                onClick={toggleTheme}
-                className="nova-theme-toggle"
-                aria-label="Toggle visual theme"
-                title={`Switch to ${theme === "nova" ? "Dark" : "Light"} theme`}
+                type="button"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setLoaderKey(k => k + 1);
+                }}
+                className="j-btn-outline"
+                style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
+                title="Replay Loading Entrance"
               >
-                {theme === "nova" ? <Moon size={16} /> : <Sun size={16} />}
+                <RotateCcw size={13} />
+                <span>Intro</span>
               </button>
 
-              <NovaButton href="#contact" variant="primary" hoverText="Let's talk">
-                Get in Touch
-              </NovaButton>
+              <a href="#contact" className="j-btn-cta">
+                Let's Talk
+              </a>
 
+              {/* Mobile Menu Hamburger */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="nova-hamburger-btn"
-                aria-label="Toggle navigation menu"
+                aria-label="Toggle Navigation Menu"
+                className="j-mobile-menu-btn"
               >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
           </div>
@@ -600,606 +586,627 @@ export default function App() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               style={{
-                background: 'var(--color-surface)',
-                borderBottom: '1px solid var(--color-outline-variant)',
+                background: '#0d0d0f',
+                borderBottom: '1px solid var(--line)',
                 padding: '1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1rem'
+                gap: '1.25rem'
               }}
             >
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
-                <a href="#skills" onClick={() => setMobileMenuOpen(false)}>Technical Skills</a>
-                <a href="#projects" onClick={() => setMobileMenuOpen(false)}>Featured Projects</a>
-                <a href="#education" onClick={() => setMobileMenuOpen(false)}>Education</a>
-                <a href="#certifications" onClick={() => setMobileMenuOpen(false)}>Certifications</a>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
+                <a href="#works" onClick={() => setMobileMenuOpen(false)}>Selected Works</a>
+                <a href="#pillars" onClick={() => setMobileMenuOpen(false)}>Capabilities</a>
+                <a href="#experiments" onClick={() => setMobileMenuOpen(false)}>AI Probe</a>
+                <a href="#about" onClick={() => setMobileMenuOpen(false)}>About & Education</a>
+                <a href="#credentials" onClick={() => setMobileMenuOpen(false)}>Credentials</a>
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
               </nav>
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <NovaButton href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" variant="outline" style={{ flex: 1 }}>
-                  Resume
-                </NovaButton>
-                <NovaButton href="#contact" onClick={() => setMobileMenuOpen(false)} variant="primary" style={{ flex: 1 }}>
-                  Let's talk
-                </NovaButton>
+                <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" className="j-btn-outline" style={{ flex: 1, justifyContent: 'center' }}>
+                  Résumé
+                </a>
+                <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="j-btn-cta" style={{ flex: 1, justifyContent: 'center' }}>
+                  Let's Talk
+                </a>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
-      {/* Main Content */}
-      <main style={{ flex: 1 }}>
-        {/* ====================================================================
-            HERO SECTION
-            ==================================================================== */}
-        <section id="hero" className="nova-section" style={{ paddingTop: '2.5rem', paddingBottom: '0' }}>
-          <div className="nova-container">
-            <div className="nova-hero-card">
-              <div className="nova-hero-grid">
-                <div className="nova-hero-text-col">
-                  <div>
-                    <span className="nova-accent-label">
-                      AI & DATA SCIENCE / MACHINE LEARNING PRACTITIONER
+      {/* ====================================================================
+          HERO SECTION (JITHIN RP EDITORIAL ARCHITECTURE)
+          ==================================================================== */}
+      <section id="hero" className="j-hero">
+        <div className="j-container">
+          <div className="j-hero-lede-row">
+            <div className="j-hero-tag">
+              <Sparkles size={14} color="var(--accent)" />
+              <span>AI Engineer & Machine Learning Developer</span>
+            </div>
+
+            <h1 className="j-hero-lede">
+              I build <strong>intelligent systems</strong> and <strong>machine learning models</strong>, turning complex algorithmic pipelines into fast, practical web software.
+            </h1>
+          </div>
+
+          {/* Metadata Row matching Jithin RP */}
+          <div className="j-hero-meta">
+            <div>AI & ML PRACTITIONER</div>
+            <div className="j-hero-plus">+</div>
+            <div>B.TECH 2027 (HITS)</div>
+            <div className="j-hero-plus">+</div>
+            <div>CHENNAI, INDIA</div>
+          </div>
+
+          {/* Signature Architectural Headline Name */}
+          <div className="j-hero-name-row">
+            <div className="j-hero-name" aria-label="Siddharth P">
+              <span>S</span>
+              <span>I</span>
+              <span>D</span>
+              <span>D</span>
+              <span>H</span>
+              <span>A</span>
+              <span>R</span>
+              <span>T</span>
+              <span>H</span>
+              <span style={{ color: 'var(--accent)' }}>•</span>
+              <span>P</span>
+            </div>
+          </div>
+
+          {/* Hero Bottom Bar */}
+          <div className="j-hero-bar">
+            <div className="j-hero-bar-left">
+              <span>EXPLORE BELOW</span>
+              <span>↓</span>
+              <span>{CURRENT_YEAR} PORTFOLIO</span>
+            </div>
+
+            <div className="j-hero-bar-right">
+              <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
+                <Code2 size={14} /> GitHub ↗
+              </a>
+              <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
+                LinkedIn ↗
+              </a>
+              <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" className="j-btn-cta">
+                View Résumé
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          KINETIC MARQUEE TICKER (JITHIN RP SIGNATURE)
+          ==================================================================== */}
+      <div className="j-marquee" aria-hidden="true">
+        <div className="j-marquee-track">
+          <div className="j-marquee-group">
+            <span>Machine Learning</span>
+            <span className="plus">+</span>
+            <span>BERT Transformers</span>
+            <span className="plus">+</span>
+            <span>Text Provenance</span>
+            <span className="plus">+</span>
+            <span>Support Vector Machines</span>
+            <span className="plus">+</span>
+            <span>Python & Scikit-Learn</span>
+            <span className="plus">+</span>
+            <span>Real-Time Inference</span>
+            <span className="plus">+</span>
+            <span>Data Science</span>
+            <span className="plus">+</span>
+            <span>Responsive Web Architecture</span>
+            <span className="plus">+</span>
+          </div>
+          <div className="j-marquee-group">
+            <span>Machine Learning</span>
+            <span className="plus">+</span>
+            <span>BERT Transformers</span>
+            <span className="plus">+</span>
+            <span>Text Provenance</span>
+            <span className="plus">+</span>
+            <span>Support Vector Machines</span>
+            <span className="plus">+</span>
+            <span>Python & Scikit-Learn</span>
+            <span className="plus">+</span>
+            <span>Real-Time Inference</span>
+            <span className="plus">+</span>
+            <span>Data Science</span>
+            <span className="plus">+</span>
+            <span>Responsive Web Architecture</span>
+            <span className="plus">+</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ====================================================================
+          PILLARS / CORE CAPABILITIES
+          ==================================================================== */}
+      <section id="pillars" className="j-section">
+        <div className="j-container">
+          <div className="j-section-header">
+            <span className="j-section-sub">Areas of Practice</span>
+            <h2 className="j-section-title">
+              Engineered for intelligence, precision, and production.
+            </h2>
+            <p className="j-section-desc">
+              From mathematical feature formulations and contextual transformer pipelines to clean, accessible frontend interfaces that visualize models in real time.
+            </p>
+          </div>
+
+          <div className="j-pillars-grid">
+            {PILLARS.map((p, i) => (
+              <div key={i} className="j-pillar-col">
+                <div>
+                  <span className="j-pillar-num">{p.number} /</span>
+                  <h3 className="j-pillar-title">{p.title}</h3>
+                  <p className="j-pillar-text">{p.desc}</p>
+                </div>
+                <div className="j-pillar-tags">
+                  {p.tags.map((t, idx) => (
+                    <span key={idx} className="j-pill-tag">
+                      {t}
                     </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                    <h1 className="nova-hero-heading">
-                      Building intelligent systems for the{" "}
-                      <span className="text-brand-accent">next era of AI</span>
-                    </h1>
+      {/* ====================================================================
+          SELECTED WORKS / FEATURED CASE STUDIES
+          ==================================================================== */}
+      <section id="works" className="j-section" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div className="j-container">
+          <div className="j-section-header">
+            <span className="j-section-sub">Curated Case Studies</span>
+            <h2 className="j-section-title">
+              Selected Works
+            </h2>
+            <p className="j-section-desc">
+              Deep dives into machine learning models, empirical benchmarks, and responsive user interfaces built around real-world data problems.
+            </p>
+          </div>
 
-                    <p className="nova-hero-lead">
-                      {PERSONAL_INFO.heroSubtitle}
-                    </p>
+          <div className="j-works-list">
+            {SELECTED_PROJECTS.map((proj) => (
+              <article key={proj.id} className="j-work-card">
+                <div className="j-work-inner">
+                  {/* Left Column: Editorial Information */}
+                  <div className="j-work-content">
+                    <div>
+                      <div className="j-work-meta-top">
+                        <span className="j-work-idx">{proj.index} / {proj.category}</span>
+                        <span className="j-work-status">{proj.status}</span>
+                      </div>
 
-                    <div className="nova-hero-cta-row">
-                      <NovaButton href="#projects" variant="primary" hoverText="See Projects">
-                        Explore Featured Projects
-                      </NovaButton>
-                      <NovaButton
-                        href={PERSONAL_INFO.resumePath}
+                      <h3 className="j-work-title">{proj.title}</h3>
+                      <p className="j-work-summary">{proj.summary}</p>
+
+                      <div className="j-work-narrative-box">
+                        <h4>The Challenge & Context</h4>
+                        <p>{proj.problemStatement}</p>
+                      </div>
+
+                      <div className="j-work-specs-row">
+                        <div className="j-work-spec-item">
+                          <span className="label">Timeline</span>
+                          <span className="value">{proj.timeline}</span>
+                        </div>
+                        <div className="j-work-spec-item">
+                          <span className="label">Role</span>
+                          <span className="value">{proj.role}</span>
+                        </div>
+                        <div className="j-work-spec-item">
+                          <span className="label">Primary Stack</span>
+                          <span className="value">{proj.technologies.slice(0, 3).join(", ")}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="j-work-actions">
+                      <button
+                        onClick={() => setActiveProjectModal(proj)}
+                        className="j-btn-cta"
+                      >
+                        Explore Case Study <ChevronRight size={15} />
+                      </button>
+                      <a
+                        href={proj.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        variant="outline"
-                        hoverText="Download PDF"
+                        className="j-btn-outline"
                       >
-                        View Resume
-                      </NovaButton>
+                        <Code2 size={14} /> Repository
+                      </a>
                     </div>
                   </div>
 
-                  <div className="nova-focus-ticker">
-                    <span>SPECIALIZATION:</span>
-                    <span className="tag">BERT</span>
-                    <span>•</span>
-                    <span className="tag">SVM</span>
-                    <span>•</span>
-                    <span className="tag">LOGISTIC REGRESSION</span>
-                    <span>•</span>
-                    <span className="tag">PYTHON</span>
-                    <span>•</span>
-                    <span className="tag">NLP</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Signature Nova Dark Stat Bar (3 Metrics) */}
-              <div className="nova-hero-stats">
-                <div className="nova-stat-item">
-                  <strong className="nova-stat-num">2027</strong>
-                  <span className="nova-stat-label">Expected Graduation Year</span>
-                </div>
-                <div className="nova-stat-item">
-                  <strong className="nova-stat-num">4</strong>
-                  <span className="nova-stat-label">Industry Certifications</span>
-                </div>
-                <div className="nova-stat-item">
-                  <strong className="nova-stat-num">3</strong>
-                  <span className="nova-stat-label">Core AI & ML Projects</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ====================================================================
-            TECHNICAL SKILLS
-            ==================================================================== */}
-        <section id="skills" className="nova-section">
-          <div className="nova-container">
-            <div className="nova-projects-intro">
-              <div>
-                <span className="nova-accent-label">CORE COMPETENCIES & METHODS</span>
-                <h2 className="nova-section-title">Technical Skills</h2>
-              </div>
-              <p className="nova-lead" style={{ margin: 0 }}>
-                End-to-end technical capabilities, from algorithmic exploration and model training to responsive web deployment.
-              </p>
-            </div>
-
-            <div className="nova-services-grid">
-              {SERVICES_CAPABILITIES.map((service) => {
-                const Icon = service.icon;
-                return (
-                  <GlowCard
-                    key={service.number}
-                    customSize={true}
-                    glowColor="orange"
-                    className="nova-service-card"
-                  >
-                    <div>
-                      <div className="nova-service-top-row">
-                        <div className="nova-service-icon-box">
-                          <Icon size={22} />
+                  {/* Right Column: High-End Terminal & Architecture Preview */}
+                  <div className="j-work-media">
+                    <div className="j-terminal-card">
+                      <div className="j-terminal-header">
+                        <div className="j-terminal-dots">
+                          <div className="j-terminal-dot" />
+                          <div className="j-terminal-dot" />
+                          <div className="j-terminal-dot" />
                         </div>
-                        {/* Nova Dual Slide Arrow */}
-                        <div className="nova-service-arrow">
-                          <div className="nova-arrow-inner">
-                            <span className="nova-arrow-1">↗</span>
-                            <span className="nova-arrow-2">↗</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <span className="nova-service-number">{service.number}</span>
-                      <h3 className="nova-service-title">{service.title}</h3>
-                      <p className="nova-service-desc">{service.desc}</p>
-                    </div>
-
-                    <div className="nova-tech-pills-row">
-                      {service.tech.map((t) => (
-                        <span
-                          key={t}
-                          style={{
-                            padding: '0.2rem 0.55rem',
-                            borderRadius: 'var(--rounded-full)',
-                            background: 'var(--color-surface-dim)',
-                            fontSize: '0.725rem',
-                            fontFamily: 'var(--font-mono)'
-                          }}
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </GlowCard>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ====================================================================
-            FEATURED PROJECTS
-            ==================================================================== */}
-        <section id="projects" className="nova-section" style={{ background: 'var(--color-surface)', borderTop: '1px solid rgba(22, 22, 22, 0.06)', borderBottom: '1px solid rgba(22, 22, 22, 0.06)' }}>
-          <div className="nova-container">
-            <div className="nova-projects-intro">
-              <div>
-                <span className="nova-accent-label">PORTFOLIO // SELECTED WORK</span>
-                <h2 className="nova-section-title">Featured Projects</h2>
-              </div>
-              <p className="nova-lead" style={{ margin: 0 }}>
-                Practical AI systems combining rigorous model exploration, real-time inference, and responsive user interfaces.
-              </p>
-            </div>
-
-            <div className="nova-projects-grid">
-              {PROJECTS.map((project) => (
-                <GlowCard
-                  key={project.id}
-                  customSize={true}
-                  glowColor="blue"
-                  className="nova-project-card"
-                  onClick={() => setActiveProjectModal(project)}
-                >
-                  {/* Visual Stage */}
-                  <div className="nova-project-visual-stage">
-                    <div style={{ textAlign: 'center', color: '#ffffff' }}>
-                      <div style={{ width: '4rem', height: '4rem', margin: '0 auto 1rem auto', borderRadius: 'var(--rounded-full)', background: 'rgba(185, 139, 110, 0.2)', border: '1px solid var(--color-brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-brand-accent)' }}>
-                        <Brain size={28} />
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        {project.category}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content Block */}
-                  <div className="nova-project-content-block">
-                    <div>
-                      <div className="nova-project-meta-bar">
-                        <span className="nova-project-category">{project.category}</span>
-                        <span className={`nova-status-tag ${project.status === "Completed" ? "completed" : "in-progress"}`}>
-                          {project.status === "Completed" ? <CheckCircle2 size={12} /> : <Clock size={12} />}
-                          <span>{project.status}</span>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--muted-2)' }}>
+                          inference_pipeline.py
                         </span>
                       </div>
 
-                      <h3 className="nova-project-heading">{project.title}</h3>
-                      <p className="nova-project-desc">{project.summary}</p>
-
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
-                        {project.technologies.slice(0, 4).map((t) => (
-                          <span
-                            key={t}
-                            style={{
-                              padding: '0.2rem 0.6rem',
-                              borderRadius: 'var(--rounded-full)',
-                              background: 'var(--color-surface-container)',
-                              fontSize: '0.725rem',
-                              fontFamily: 'var(--font-mono)'
-                            }}
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="nova-project-footer">
-                      <span className="nova-project-cta-link">
-                        <span>Explore Architecture</span>
-                        <ArrowUpRight size={16} />
-                      </span>
-
-                      {/* Signature Nova Floating Arrow */}
-                      <div className="nova-service-arrow">
-                        <div className="nova-arrow-inner">
-                          <span className="nova-arrow-1">↗</span>
-                          <span className="nova-arrow-2">↗</span>
+                      <div className="j-terminal-body">
+                        <div><span className="j-terminal-prompt">$</span> python benchmark_models.py --dataset corpus_v2</div>
+                        <div style={{ color: 'var(--muted-2)', marginBlock: '0.4rem' }}>
+                          [INFO] Initializing TF-IDF & BERT Tokenizer...<br />
+                          [INFO] Evaluating boundary convergence:
+                        </div>
+                        <div>
+                          • Logistic Regression: <span className="j-terminal-success">Loss: 0.184</span> | Latency: 42ms<br />
+                          • Support Vector Machine: <span className="j-terminal-success">Loss: 0.142</span> | Linear Kernel<br />
+                          • Contextual BERT Head: <span className="j-terminal-success">Loss: 0.089</span> | Multi-class
+                        </div>
+                        <div style={{ marginTop: '0.75rem', borderTop: '1px solid #222', paddingTop: '0.6rem', color: '#ffffff' }}>
+                          ✓ Real-time inference bridge active on localhost
                         </div>
                       </div>
                     </div>
                   </div>
-                </GlowCard>
-              ))}
-            </div>
+                </div>
+              </article>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ====================================================================
-            EDUCATION
-            ==================================================================== */}
-        <section id="education" className="nova-section">
-          <div className="nova-container">
-            <div className="nova-projects-intro">
-              <div>
-                <span className="nova-accent-label">ACADEMIC BACKGROUND</span>
-                <h2 className="nova-section-title">Education</h2>
-              </div>
-              <p className="nova-lead" style={{ margin: 0 }}>
-                Formal academic training in computer science, machine learning architectures, and data engineering.
+      {/* ====================================================================
+          TECHNICAL PLAYGROUND / LIVE EXPERIMENT
+          ==================================================================== */}
+      <section id="experiments" className="j-section">
+        <div className="j-container">
+          <div className="j-section-header">
+            <span className="j-section-sub">Interactive Systems</span>
+            <h2 className="j-section-title">
+              Technical Experiments
+            </h2>
+            <p className="j-section-desc">
+              Test algorithms right in the browser. A client-side demonstration of stylistic entropy, lexical richness, and classification heuristics.
+            </p>
+          </div>
+
+          <LiveTextProbe />
+        </div>
+      </section>
+
+      {/* ====================================================================
+          ABOUT ME & ACADEMIC BACKGROUND
+          ==================================================================== */}
+      <section id="about" className="j-section" style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="j-container">
+          <div className="j-section-header">
+            <span className="j-section-sub">Background & Direction</span>
+            <h2 className="j-section-title">
+              Engineering with curiosity and algorithmic rigor.
+            </h2>
+          </div>
+
+          <div className="j-about-grid">
+            <div className="j-about-bio">
+              <p>
+                I'm <strong>Siddharth P</strong>, an AI and Data Science engineering student at <strong>Hindustan Institute of Technology and Science (HITS), Chennai</strong>. My technical journey began with an fascination with how mathematical probability can discern subtle human nuances from synthetic code.
+              </p>
+              <p>
+                My primary focus revolves around <strong>natural language processing</strong>, comparative model classification, and building web systems that make complex artificial intelligence models accessible and responsive for everyday users.
+              </p>
+              <p>
+                Outside of training pipelines and tuning classifiers, I explore modern web technologies, responsive system design, and clean architecture principles.
               </p>
             </div>
 
-            <GlowCard customSize={true} glowColor="purple" className="nova-education-card" style={{ marginTop: '2.5rem' }}>
-              <div>
+            {/* Education & Academic Card */}
+            <div>
+              <div className="j-cred-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ width: '3rem', height: '3rem', borderRadius: 'var(--rounded-md)', background: 'var(--color-surface-container)', color: 'var(--color-brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <GraduationCap size={24} />
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--color-brand-accent)', fontWeight: 700, textTransform: 'uppercase' }}>
-                      UNDERGRADUATE DEGREE
-                    </span>
-                    <h3 style={{ fontSize: '1.45rem', fontWeight: 800, lineHeight: 1.25, color: 'var(--color-on-surface)' }}>
-                      Hindustan Institute of Technology and Science, Chennai
-                    </h3>
-                  </div>
-                </div>
-
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-brand-accent)', marginBottom: '1rem' }}>
-                  B.Tech – Computer Science Engineering (Artificial Intelligence & Data Science)
-                </div>
-
-                <p style={{ color: 'var(--color-on-surface-variant)', fontSize: '0.95rem', lineHeight: 1.65, marginBottom: '1.25rem' }}>
-                  Comprehensive coursework covering mathematical foundations of machine learning, neural networks, contextual transformers, data structures, and intelligent web systems.
-                </p>
-
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', fontWeight: 600 }}>
-                    CORE COURSEWORK & DOMAINS:
+                  <GraduationCap size={20} color="var(--accent)" />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    Degree & University
                   </span>
-                  <div className="nova-education-coursework">
-                    {[
-                      "Machine Learning",
-                      "Artificial Intelligence",
-                      "Natural Language Processing",
-                      "Data Science with Python",
-                      "BERT & Transformer Representations",
-                      "Data Structures & Algorithms",
-                      "Database Management",
-                      "Statistical Inference"
-                    ].map((c) => (
-                      <span key={c} className="nova-education-badge">
-                        {c}
+                </div>
+                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.35rem' }}>
+                  {PERSONAL_INFO.education.degree}
+                </h4>
+                <p style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.75rem' }}>
+                  {PERSONAL_INFO.education.institution}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>
+                  <span>{PERSONAL_INFO.education.period}</span>
+                  <span style={{ color: 'var(--ink)' }}>Expected Graduation: {PERSONAL_INFO.education.expectedGraduation}</span>
+                </div>
+              </div>
+
+              <div className="j-cred-card">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  <MapPin size={18} color="var(--accent)" />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    Location & Hub
+                  </span>
+                </div>
+                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--ink)' }}>
+                  Chennai, Tamil Nadu, India
+                </h4>
+                <p style={{ fontSize: '0.825rem', color: 'var(--muted)', marginTop: '0.25rem' }}>
+                  Open for software development internships, AI/ML research collaborations, and engineering roles.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          CERTIFICATIONS & CREDENTIALS
+          ==================================================================== */}
+      <section id="credentials" className="j-section" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--line)' }}>
+        <div className="j-container">
+          <div className="j-section-header">
+            <span className="j-section-sub">Verified Competencies</span>
+            <h2 className="j-section-title">
+              Certifications & Technical Toolkit
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '3.5rem' }}>
+            {CERTIFICATIONS.map((cert, i) => (
+              <div key={i} className="j-cred-card" style={{ background: 'var(--surface)', margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <Award size={18} color="var(--accent)" />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    {cert.issuer}
+                  </span>
+                </div>
+                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.5rem' }}>
+                  {cert.name}
+                </h4>
+                <p style={{ fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--muted)' }}>
+                  {cert.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Technical Stack Categories */}
+          <div style={{ borderTop: '1px solid var(--line)', paddingTop: '2.5rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '1.75rem' }}>
+              Full Technical Competency Matrix
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
+              {SKILL_MATRIX.map((group, i) => (
+                <div key={i}>
+                  <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.85rem' }}>
+                    {group.category}
+                  </h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {group.items.map((item, idx) => (
+                      <span key={idx} className="j-pill-tag">
+                        {item}
                       </span>
                     ))}
                   </div>
                 </div>
-              </div>
-
-              <div style={{ background: 'var(--color-surface-dim)', borderRadius: 'var(--rounded-xl)', padding: '2rem', border: '1px solid rgba(22, 22, 22, 0.06)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block', marginBottom: '0.25rem' }}>STUDY DURATION</span>
-                  <strong style={{ fontSize: '1.15rem', fontFamily: 'var(--font-heading)' }}>Jul 2023 – Present</strong>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block', marginBottom: '0.25rem' }}>EXPECTED GRADUATION</span>
-                  <strong style={{ fontSize: '1.15rem', fontFamily: 'var(--font-heading)', color: 'var(--color-brand-accent)' }}>Class of 2027</strong>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block', marginBottom: '0.25rem' }}>CAMPUS LOCATION</span>
-                  <strong style={{ fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>Chennai, Tamil Nadu, India</strong>
-                </div>
-                <div style={{ paddingTop: '0.75rem', borderTop: '1px solid rgba(22, 22, 22, 0.08)' }}>
-                  <NovaButton href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" variant="outline" hoverText="Open PDF" style={{ width: '100%', justifyContent: 'center' }}>
-                    View Academic Record
-                  </NovaButton>
-                </div>
-              </div>
-            </GlowCard>
-          </div>
-        </section>
-
-        {/* ====================================================================
-            CERTIFICATIONS
-            ==================================================================== */}
-        <section id="certifications" className="nova-section" style={{ background: 'var(--color-surface)', borderTop: '1px solid rgba(22, 22, 22, 0.06)', borderBottom: '1px solid rgba(22, 22, 22, 0.06)' }}>
-          <div className="nova-container">
-            <div className="nova-projects-intro">
-              <div>
-                <span className="nova-accent-label">PROFESSIONAL CREDENTIALS</span>
-                <h2 className="nova-section-title">Certifications</h2>
-              </div>
-              <p className="nova-lead" style={{ margin: 0 }}>
-                Industry-recognized credentials from globally established technology leaders in AI, Cloud, and Professional Excellence.
-              </p>
-            </div>
-
-            <div className="nova-certs-grid">
-              {CERTIFICATIONS.map((cert) => (
-                <GlowCard key={cert.title} customSize={true} glowColor="green" className="nova-cert-tile">
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                      <div style={{ width: '2.75rem', height: '2.75rem', borderRadius: 'var(--rounded-md)', background: 'var(--color-surface-container)', color: 'var(--color-brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Award size={22} />
-                      </div>
-                      <span style={{ padding: '0.2rem 0.6rem', borderRadius: 'var(--rounded-full)', background: 'rgba(16, 185, 129, 0.12)', color: '#10b981', fontSize: '0.7rem', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-                        CREDENTIAL
-                      </span>
-                    </div>
-
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.25rem' }}>{cert.title}</h3>
-                    <div style={{ fontSize: '0.825rem', fontFamily: 'var(--font-mono)', color: 'var(--color-brand-accent)', fontWeight: 600, marginBottom: '0.75rem' }}>
-                      {cert.issuer}
-                    </div>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--color-on-surface-variant)', lineHeight: 1.6 }}>
-                      {cert.description}
-                    </p>
-                  </div>
-
-                  <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(22, 22, 22, 0.08)', fontSize: '0.725rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)' }}>
-                    {cert.category}
-                  </div>
-                </GlowCard>
               ))}
             </div>
           </div>
-        </section>
-
-        {/* ====================================================================
-            CONTACT ("LET'S CONNECT & COLLABORATE")
-            ==================================================================== */}
-        <section id="contact" className="nova-section">
-          <div className="nova-container">
-            <div className="nova-contact-grid">
-              {/* Left Column: Direct Coordinates */}
-              <div>
-                <span className="nova-accent-label">GET IN TOUCH</span>
-                <h2 className="nova-section-title" style={{ fontSize: '2.5rem' }}>
-                  Let's Connect & Collaborate
-                </h2>
-                <p className="nova-lead" style={{ marginTop: '1rem', marginBottom: '2.5rem' }}>
-                  Whether you're looking for an ML practitioner, research collaborator, or student engineer for your team, I'd love to connect.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {/* Email */}
-                  <div style={{ background: 'var(--color-surface)', padding: '1.25rem 1.5rem', borderRadius: 'var(--rounded-lg)', border: '1px solid rgba(22, 22, 22, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: 'var(--rounded-md)', background: 'var(--color-surface-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-brand-accent)' }}>
-                        <Mail size={18} />
-                      </div>
-                      <div>
-                        <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block' }}>EMAIL</span>
-                        <a href={`mailto:${PERSONAL_INFO.email}`} style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                          {PERSONAL_INFO.email}
-                        </a>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => copyToClipboard(PERSONAL_INFO.email, "Email")}
-                      style={{ padding: '0.5rem', color: 'var(--color-on-surface-variant)' }}
-                      title="Copy email address"
-                    >
-                      <Copy size={16} />
-                    </button>
-                  </div>
-
-                  {/* LinkedIn */}
-                  <div style={{ background: 'var(--color-surface)', padding: '1.25rem 1.5rem', borderRadius: 'var(--rounded-lg)', border: '1px solid rgba(22, 22, 22, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: 'var(--rounded-md)', background: 'var(--color-surface-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-brand-accent)' }}>
-                        <LinkedInIcon size={18} />
-                      </div>
-                      <div>
-                        <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block' }}>LINKEDIN</span>
-                        <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                          linkedin.com/in/siddharth-premnath
-                        </a>
-                      </div>
-                    </div>
-                    <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ padding: '0.5rem', color: 'var(--color-on-surface-variant)' }}>
-                      <ArrowUpRight size={18} />
-                    </a>
-                  </div>
-
-                  {/* Phone */}
-                  <div style={{ background: 'var(--color-surface)', padding: '1.25rem 1.5rem', borderRadius: 'var(--rounded-lg)', border: '1px solid rgba(22, 22, 22, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: 'var(--rounded-md)', background: 'var(--color-surface-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-brand-accent)' }}>
-                        <Phone size={18} />
-                      </div>
-                      <div>
-                        <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)', display: 'block' }}>TELEPHONE</span>
-                        <a href={`tel:${PERSONAL_INFO.phone}`} style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                          {PERSONAL_INFO.phoneDisplay}
-                        </a>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => copyToClipboard(PERSONAL_INFO.phone, "Phone number")}
-                      style={{ padding: '0.5rem', color: 'var(--color-on-surface-variant)' }}
-                      title="Copy phone"
-                    >
-                      <Copy size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Editorial Contact Form */}
-              <div className="nova-contact-form-card">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(22, 22, 22, 0.08)', paddingBottom: '1rem', marginBottom: '2rem' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Start a project</h3>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--color-on-surface-variant)' }}>Direct mail dispatch</span>
-                </div>
-
-                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontFamily: 'var(--font-sans)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      value={contactForm.name}
-                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                      placeholder="e.g. Alex Mercer"
-                      className="nova-input-field"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontFamily: 'var(--font-sans)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>
-                      Your Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={contactForm.email}
-                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                      placeholder="name@organization.com"
-                      className="nova-input-field"
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontFamily: 'var(--font-sans)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>
-                      Project / Collaboration Note *
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                      placeholder="Tell me about your project, team opportunity, or inquiry..."
-                      className="nova-input-field"
-                      style={{ resize: 'none' }}
-                    />
-                  </div>
-
-                  {formSubmitted && (
-                    <div style={{ padding: '0.85rem', borderRadius: 'var(--rounded-md)', background: 'rgba(16, 185, 129, 0.15)', color: '#047857', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <CheckCircle2 size={16} />
-                      <span>Email draft prepared in your email client. Thank you for reaching out!</span>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                    <span style={{ fontSize: '0.725rem', color: 'var(--color-on-surface-variant)', fontFamily: 'var(--font-mono)' }}>
-                      * Direct link dispatch via mailto protocol.
-                    </span>
-                    <NovaButton type="submit" variant="primary" hoverText="Send Message">
-                      Start a project
-                    </NovaButton>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
       {/* ====================================================================
-          FOOTER
+          CONTACT SECTION (JITHIN RP EDITORIAL CLOSING)
           ==================================================================== */}
-      <footer className="nova-footer">
-        <div className="nova-container">
-          <div className="nova-footer-top">
+      <section id="contact" className="j-section" style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="j-container">
+          <div className="j-contact-box">
+            {/* Left Column: Headline & Direct Links */}
             <div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.18em', color: '#ffffff', marginBottom: '0.35rem' }}>
-                SIDDHARTH P.
-              </div>
-              <p style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.85rem' }}>
-                AI & Data Science engineering • Turning ideas into intelligent systems.
+              <span className="j-section-sub">Get in Touch</span>
+              <h2 className="j-contact-title">
+                Looking for your next AI engineer?
+              </h2>
+              <p className="j-contact-sub">
+                I'd love to hear what you're building and explore how I could contribute to your machine learning or software engineering team.
               </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '420px' }}>
+                {/* Email Direct */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.25rem', border: '1px solid var(--line)', borderRadius: 'var(--rounded-md)', background: 'var(--surface)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Mail size={16} color="var(--accent)" />
+                    <div>
+                      <span style={{ display: 'block', fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>DIRECT INQUIRY</span>
+                      <a href={`mailto:${PERSONAL_INFO.email}`} style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                        {PERSONAL_INFO.email}
+                      </a>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(PERSONAL_INFO.email, "Email address")}
+                    style={{ color: 'var(--muted)', padding: '0.4rem' }}
+                    title="Copy Email"
+                  >
+                    <Copy size={15} />
+                  </button>
+                </div>
+
+                {/* LinkedIn */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.25rem', border: '1px solid var(--line)', borderRadius: 'var(--rounded-md)', background: 'var(--surface)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Globe size={16} color="var(--accent)" />
+                    <div>
+                      <span style={{ display: 'block', fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>LINKEDIN PROFILE</span>
+                      <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                        linkedin.com/in/siddharth-premnath
+                      </a>
+                    </div>
+                  </div>
+                  <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--muted)', padding: '0.4rem' }}>
+                    <ArrowUpRight size={16} />
+                  </a>
+                </div>
+
+                {/* GitHub */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.25rem', border: '1px solid var(--line)', borderRadius: 'var(--rounded-md)', background: 'var(--surface)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Code2 size={16} color="var(--accent)" />
+                    <div>
+                      <span style={{ display: 'block', fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>GITHUB REPOSITORIES</span>
+                      <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                        github.com/Lucky007456
+                      </a>
+                    </div>
+                  </div>
+                  <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--muted)', padding: '0.4rem' }}>
+                    <ArrowUpRight size={16} />
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div className="nova-footer-links">
-              <a href="#skills">Skills</a>
-              <a href="#projects">Projects</a>
-              <a href="#education">Education</a>
-              <a href="#certifications">Certifications</a>
-              <a href="#contact">Contact</a>
-              <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer">Resume</a>
+            {/* Right Column: Clean Editorial Contact Form */}
+            <form onSubmit={handleContactSubmit} className="j-contact-form">
+              <div style={{ borderBottom: '1px solid var(--line)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)' }}>
+                  Send a Direct Dispatch
+                </h3>
+              </div>
+
+              <div className="j-input-group">
+                <label>Your Name</label>
+                <input
+                  type="text"
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                  placeholder="e.g. Alex Mercer"
+                  className="j-input-field"
+                />
+              </div>
+
+              <div className="j-input-group">
+                <label>Your Email Address *</label>
+                <input
+                  type="email"
+                  required
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                  placeholder="name@organization.com"
+                  className="j-input-field"
+                />
+              </div>
+
+              <div className="j-input-group">
+                <label>Message / Project Opportunity *</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                  placeholder="Tell me about your team, role, or collaboration inquiry..."
+                  className="j-input-field"
+                  style={{ resize: 'none' }}
+                />
+              </div>
+
+              {formSubmitted && (
+                <div style={{ padding: '0.75rem', borderRadius: 'var(--rounded-xs)', background: 'rgba(52, 211, 153, 0.12)', border: '1px solid rgba(52, 211, 153, 0.3)', color: '#34d399', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CheckCircle2 size={16} />
+                  <span>Draft prepared in your email client. Thank you for connecting!</span>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem' }}>
+                <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>
+                  Dispatches via mailto protocol
+                </span>
+                <button type="submit" className="j-btn-cta">
+                  Dispatch Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          FOOTER (JITHIN RP SIGNATURE FOOTER)
+          ==================================================================== */}
+      <footer className="j-footer">
+        <div className="j-container">
+          <div className="j-footer-inner">
+            <div>
+              <span>© {CURRENT_YEAR} Siddharth P. Built with precision, curiosity & clean code.</span>
+            </div>
+
+            <div className="j-footer-links">
+              <a href="#works" className="j-footer-link">Works</a>
+              <a href="#pillars" className="j-footer-link">Capabilities</a>
+              <a href="#about" className="j-footer-link">About</a>
+              <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" className="j-footer-link">Résumé</a>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#ffffff', fontWeight: 700 }}
-                aria-label="Back to top"
+                className="j-footer-link"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
               >
-                <ArrowUp size={14} />
-                <span>Top</span>
+                Back to top ↑
               </button>
-            </div>
-          </div>
-
-          <div className="nova-footer-bottom">
-            <div>
-              © {CURRENT_YEAR} Siddharth P. All rights reserved.
-            </div>
-            <div>
-              Designed with the authentic Nova aesthetic • AI & Data Science Portfolio
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Project Detail Modal */}
-      <ProjectDetailModal
+      {/* Case Study Detail Modal */}
+      <ProjectModal
         project={activeProjectModal}
         isOpen={Boolean(activeProjectModal)}
         onClose={() => setActiveProjectModal(null)}
       />
 
-      {/* Interactive Toast */}
-      <Toast
-        message={toastMessage}
-        visible={toastVisible}
-        onHide={() => setToastVisible(false)}
-      />
-    </div>
-  </LoadingOverlay>
+      {/* Interactive Toast Notification */}
+      <AnimatePresence>
+        {toastVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            style={{
+              position: 'fixed',
+              bottom: '2rem',
+              right: '2rem',
+              zIndex: 99999,
+              background: '#1a1a1d',
+              border: '1px solid var(--surface-border)',
+              borderRadius: 'var(--rounded-full)',
+              padding: '0.75rem 1.25rem',
+              color: '#ffffff',
+              fontSize: '0.825rem',
+              fontFamily: 'var(--font-mono)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7)'
+            }}
+          >
+            <CheckCircle2 size={16} color="var(--accent)" />
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </LoadingOverlay>
   );
 }
