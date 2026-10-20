@@ -969,6 +969,237 @@ button {
 }
 
 /* ==========================================================================
+   CUSTOM CURSOR SYSTEM
+   ========================================================================== */
+.j-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  margin-left: -3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999999;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.04s linear;
+  will-change: transform;
+}
+
+.j-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  margin-left: -17px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999998;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              margin 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.2s ease;
+  will-change: transform;
+}
+
+.j-cursor-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Cursor Context States */
+.j-cursor-ring.is-link {
+  width: 46px;
+  height: 46px;
+  margin-top: -23px;
+  margin-left: -23px;
+  border-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.j-cursor-ring.is-button {
+  width: 50px;
+  height: 50px;
+  margin-top: -25px;
+  margin-left: -25px;
+  border-color: var(--accent);
+  background-color: rgba(216, 196, 182, 0.1);
+}
+
+.j-cursor-ring.is-view {
+  width: 72px;
+  height: 72px;
+  margin-top: -36px;
+  margin-left: -36px;
+  background-color: rgba(14, 14, 18, 0.92);
+  border-color: var(--accent);
+  backdrop-filter: blur(8px);
+}
+
+.j-cursor-ring.is-view .j-cursor-label {
+  opacity: 1;
+}
+
+.j-cursor-dot.is-hidden,
+.j-cursor-ring.is-hidden {
+  opacity: 0 !important;
+}
+
+/* ==========================================================================
+   CARD CURSOR SPOTLIGHT INTERACTION
+   ========================================================================== */
+.j-work-card,
+.j-pillar-col,
+.j-cred-card {
+  position: relative;
+}
+
+.j-card-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    480px circle at var(--mouse-x, -300px) var(--mouse-y, -300px),
+    rgba(216, 196, 182, 0.055),
+    transparent 75%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.j-work-card:hover .j-card-spotlight,
+.j-pillar-col:hover .j-card-spotlight,
+.j-cred-card:hover .j-card-spotlight {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   SCROLL-TRIGGERED REVEAL ANIMATIONS
+   ========================================================================== */
+.j-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.j-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   HERO TYPOGRAPHY STAGGERED PIXEL REVEAL
+   ========================================================================== */
+.j-hero-name span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(28px) scale(0.94);
+  animation: hero-letter-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.j-hero-name span:nth-child(1) { animation-delay: 0.04s; }
+.j-hero-name span:nth-child(2) { animation-delay: 0.08s; }
+.j-hero-name span:nth-child(3) { animation-delay: 0.12s; }
+.j-hero-name span:nth-child(4) { animation-delay: 0.16s; }
+.j-hero-name span:nth-child(5) { animation-delay: 0.20s; }
+.j-hero-name span:nth-child(6) { animation-delay: 0.24s; }
+.j-hero-name span:nth-child(7) { animation-delay: 0.28s; }
+.j-hero-name span:nth-child(8) { animation-delay: 0.32s; }
+.j-hero-name span:nth-child(9) { animation-delay: 0.36s; }
+.j-hero-name span:nth-child(10) { animation-delay: 0.40s; }
+.j-hero-name span:nth-child(11) { animation-delay: 0.44s; }
+
+@keyframes hero-letter-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.94);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ==========================================================================
+   FLOATING BACK-TO-TOP BUTTON
+   ========================================================================== */
+.j-back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 95;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(14, 14, 18, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.j-back-to-top:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+.j-back-to-top.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+/* Hide custom cursor on touchscreens or reduced-motion */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .j-cursor-dot,
+  .j-cursor-ring {
+    display: none !important;
+  }
+
+  .j-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .j-hero-name span {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    filter: none !important;
+  }
+}
+
+/* ==========================================================================
    RESPONSIVE DESIGN BREAKPOINTS
    ========================================================================== */
 @media (max-width: 1024px) {

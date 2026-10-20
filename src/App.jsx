@@ -14,11 +14,14 @@ import {
   Sparkles,
   ChevronRight,
   X,
-  Menu
+  Menu,
+  ArrowUp
 } from 'lucide-react';
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import NeuralGame from './components/NeuralGame';
 import CaseStudyPage from './components/CaseStudyPage';
+import CustomCursor from './components/CustomCursor';
+import MagneticButton from './components/MagneticButton';
 
 /* ==========================================================================
    PORTFOLIO DATA CONFIGURATION (Source of Truth: Uploaded Resume & Profile)
@@ -368,20 +371,30 @@ export default function App() {
     }
   };
 
-  // Passive, ultra-smooth 60 FPS scroll progress indicator (zero React re-render overhead)
+  // Passive, ultra-smooth 60 FPS scroll progress indicator & back-to-top trigger (zero React re-render overhead)
   const progressBarRef = useRef(null);
+  const backToTopRef = useRef(null);
+
   useEffect(() => {
     if (route !== 'home') return;
     let rafId = null;
     const handleScroll = () => {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
-        const el = progressBarRef.current;
-        if (el) {
-          const scrollTop = window.scrollY || document.documentElement.scrollTop;
-          const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+        if (progressBarRef.current) {
           const progress = scrollHeight > 0 ? Math.min(Math.max(scrollTop / scrollHeight, 0), 1) : 0;
-          el.style.transform = `scaleX(${progress})`;
+          progressBarRef.current.style.transform = `scaleX(${progress})`;
+        }
+
+        if (backToTopRef.current) {
+          if (scrollTop > 450) {
+            backToTopRef.current.classList.remove('is-hidden');
+          } else {
+            backToTopRef.current.classList.add('is-hidden');
+          }
         }
         rafId = null;
       });
@@ -393,6 +406,35 @@ export default function App() {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [route]);
+
+  // Scroll-triggered element reveals via IntersectionObserver (one-shot entrance, no scroll lag)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+    const reveals = document.querySelectorAll('.j-reveal');
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '0px 0px -40px 0px', threshold: 0.08 }
+    );
+
+    reveals.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [route, loaderKey]);
+
+  // Card cursor spotlight handler (CSS custom properties, zero React re-renders)
+  const handleSpotlightMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   // Live time ticker for Chennai, India (IST)
   const [currentTime, setCurrentTime] = useState("");
@@ -440,22 +482,42 @@ export default function App() {
     showToast("Opening your email client to dispatch the message.");
   };
 
-  // ROUTE 1: PLAYABLE ARCADE GAME VIEW
+  // ROUTE 1: PLAYABLE ARCADE GAME VIEW (WITH PAGE TRANSITION)
   if (route === 'game') {
-    return <NeuralGame onExit={() => navigateTo('home')} />;
+    return (
+      <motion.div
+        key="game-page"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <CustomCursor />
+        <NeuralGame onExit={() => navigateTo('home')} />
+      </motion.div>
+    );
   }
 
-  // ROUTE 2: DEDICATED CASE STUDY DEEP DIVE VIEW
+  // ROUTE 2: DEDICATED CASE STUDY DEEP DIVE VIEW (WITH PAGE TRANSITION)
   if (route.startsWith('project/')) {
     const pid = route.replace(/^project\//, '');
     const currentProject = SELECTED_PROJECTS.find(p => p.id === pid) || SELECTED_PROJECTS[0];
     return (
-      <CaseStudyPage
-        project={currentProject}
-        allProjects={SELECTED_PROJECTS}
-        onBack={() => navigateTo('home')}
-        onSelectProject={(nextP) => navigateTo(`project/${nextP.id}`)}
-      />
+      <motion.div
+        key={`case-study-${currentProject.id}`}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <CustomCursor />
+        <CaseStudyPage
+          project={currentProject}
+          allProjects={SELECTED_PROJECTS}
+          onBack={() => navigateTo('home')}
+          onSelectProject={(nextP) => navigateTo(`project/${nextP.id}`)}
+        />
+      </motion.div>
     );
   }
 
@@ -466,6 +528,9 @@ export default function App() {
       brandTitle="SIDDHARTH P."
       brandSubtitle="AI & DATA SCIENCE SPECIALIST"
     >
+      {/* High-Performance Desktop Custom Cursor (Zero-Lag Lerped Ring + Center Dot) */}
+      <CustomCursor />
+
       {/* Zero-Lag Passive Top Scroll Progress Indicator */}
       <div className="j-scroll-progress-line" ref={progressBarRef} aria-hidden="true" />
 
@@ -529,9 +594,9 @@ export default function App() {
                 <span>Intro</span>
               </button>
 
-              <a href="#contact" className="j-btn-cta">
+              <MagneticButton as="a" href="#contact" className="j-btn-cta" strength={0.35}>
                 Let's Talk
-              </a>
+              </MagneticButton>
 
               {/* Mobile Menu Hamburger */}
               <button
@@ -596,7 +661,7 @@ export default function App() {
           ==================================================================== */}
       <section id="hero" className="j-hero">
         <div className="j-container">
-          <div className="j-hero-lede-row">
+          <div className="j-hero-lede-row j-reveal">
             <div className="j-hero-tag">
               <Sparkles size={14} color="var(--accent)" />
               <span>AI Engineer & Machine Learning Developer</span>
@@ -608,7 +673,7 @@ export default function App() {
           </div>
 
           {/* Metadata Row matching Jithin RP */}
-          <div className="j-hero-meta">
+          <div className="j-hero-meta j-reveal">
             <div>AI & ML PRACTITIONER</div>
             <div className="j-hero-plus">+</div>
             <div>B.TECH 2027 (HITS)</div>
@@ -634,7 +699,7 @@ export default function App() {
           </div>
 
           {/* Hero Bottom Bar */}
-          <div className="j-hero-bar">
+          <div className="j-hero-bar j-reveal">
             <div className="j-hero-bar-left">
               <span>EXPLORE BELOW</span>
               <span>↓</span>
@@ -655,9 +720,16 @@ export default function App() {
               <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
                 LinkedIn ↗
               </a>
-              <a href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer" className="j-btn-cta">
+              <MagneticButton
+                as="a"
+                href={PERSONAL_INFO.resumePath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="j-btn-cta"
+                strength={0.35}
+              >
                 View Résumé
-              </a>
+              </MagneticButton>
             </div>
           </div>
         </div>
@@ -712,7 +784,7 @@ export default function App() {
           ==================================================================== */}
       <section id="pillars" className="j-section">
         <div className="j-container">
-          <div className="j-section-header">
+          <div className="j-section-header j-reveal">
             <span className="j-section-sub">Areas of Practice</span>
             <h2 className="j-section-title">
               Engineered for intelligence, precision, and production.
@@ -724,7 +796,8 @@ export default function App() {
 
           <div className="j-pillars-grid">
             {PILLARS.map((p, i) => (
-              <div key={i} className="j-pillar-col">
+              <div key={i} className="j-pillar-col j-reveal" onPointerMove={handleSpotlightMove}>
+                <div className="j-card-spotlight" aria-hidden="true" />
                 <div>
                   <span className="j-pillar-num">{p.number} /</span>
                   <h3 className="j-pillar-title">{p.title}</h3>
@@ -748,7 +821,7 @@ export default function App() {
           ==================================================================== */}
       <section id="works" className="j-section" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
         <div className="j-container">
-          <div className="j-section-header">
+          <div className="j-section-header j-reveal">
             <span className="j-section-sub">Curated Case Studies</span>
             <h2 className="j-section-title">
               Selected Works
@@ -760,7 +833,13 @@ export default function App() {
 
           <div className="j-works-list">
             {SELECTED_PROJECTS.map((proj) => (
-              <article key={proj.id} className="j-work-card">
+              <article
+                key={proj.id}
+                className="j-work-card j-reveal"
+                data-cursor="view"
+                onPointerMove={handleSpotlightMove}
+              >
+                <div className="j-card-spotlight" aria-hidden="true" />
                 <div className="j-work-inner">
                   {/* Left Column: Editorial Information */}
                   <div className="j-work-content">
@@ -854,16 +933,19 @@ export default function App() {
       {/* ====================================================================
           ABOUT ME & ACADEMIC BACKGROUND
           ==================================================================== */}
+      {/* ====================================================================
+          ABOUT ME & ACADEMIC BACKGROUND
+          ==================================================================== */}
       <section id="about" className="j-section" style={{ borderTop: '1px solid var(--line)' }}>
         <div className="j-container">
-          <div className="j-section-header">
+          <div className="j-section-header j-reveal">
             <span className="j-section-sub">Background & Direction</span>
             <h2 className="j-section-title">
               Engineering with curiosity and algorithmic rigor.
             </h2>
           </div>
 
-          <div className="j-about-grid">
+          <div className="j-about-grid j-reveal">
             <div className="j-about-bio">
               <p>
                 I'm <strong>Siddharth P</strong>, an AI and Data Science engineering student at <strong>Hindustan Institute of Technology and Science (HITS), Chennai</strong>. My technical journey began with an fascination with how mathematical probability can discern subtle human nuances from synthetic code.
@@ -878,7 +960,8 @@ export default function App() {
 
             {/* Education & Academic Card */}
             <div>
-              <div className="j-cred-card">
+              <div className="j-cred-card" onPointerMove={handleSpotlightMove}>
+                <div className="j-card-spotlight" aria-hidden="true" />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                   <GraduationCap size={20} color="var(--accent)" />
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -897,7 +980,8 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="j-cred-card">
+              <div className="j-cred-card" onPointerMove={handleSpotlightMove}>
+                <div className="j-card-spotlight" aria-hidden="true" />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                   <MapPin size={18} color="var(--accent)" />
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -921,7 +1005,7 @@ export default function App() {
           ==================================================================== */}
       <section id="credentials" className="j-section" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--line)' }}>
         <div className="j-container">
-          <div className="j-section-header">
+          <div className="j-section-header j-reveal">
             <span className="j-section-sub">Verified Competencies</span>
             <h2 className="j-section-title">
               Certifications & Technical Toolkit
@@ -930,7 +1014,8 @@ export default function App() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginBottom: '3.5rem' }}>
             {CERTIFICATIONS.map((cert, i) => (
-              <div key={i} className="j-cred-card" style={{ background: 'var(--surface)', margin: 0 }}>
+              <div key={i} className="j-cred-card j-reveal" style={{ background: 'var(--surface)', margin: 0 }} onPointerMove={handleSpotlightMove}>
+                <div className="j-card-spotlight" aria-hidden="true" />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                   <Award size={18} color="var(--accent)" />
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -948,7 +1033,7 @@ export default function App() {
           </div>
 
           {/* Technical Stack Categories */}
-          <div style={{ borderTop: '1px solid var(--line)', paddingTop: '2.5rem' }}>
+          <div className="j-reveal" style={{ borderTop: '1px solid var(--line)', paddingTop: '2.5rem' }}>
             <h3 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '1.75rem' }}>
               Full Technical Competency Matrix
             </h3>
@@ -978,7 +1063,7 @@ export default function App() {
           ==================================================================== */}
       <section id="contact" className="j-section" style={{ borderTop: '1px solid var(--line)' }}>
         <div className="j-container">
-          <div className="j-contact-box">
+          <div className="j-contact-box j-reveal">
             {/* Left Column: Headline & Direct Links */}
             <div>
               <span className="j-section-sub">Get in Touch</span>
@@ -1099,9 +1184,9 @@ export default function App() {
                 <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--muted-2)' }}>
                   Dispatches via mailto protocol
                 </span>
-                <button type="submit" className="j-btn-cta">
+                <MagneticButton type="submit" className="j-btn-cta" strength={0.35}>
                   Dispatch Message
-                </button>
+                </MagneticButton>
               </div>
             </form>
           </div>
@@ -1111,7 +1196,7 @@ export default function App() {
       {/* ====================================================================
           FOOTER (JITHIN RP SIGNATURE FOOTER)
           ==================================================================== */}
-      <footer className="j-footer">
+      <footer className="j-footer j-reveal">
         <div className="j-container">
           <div className="j-footer-inner">
             <div>
@@ -1148,6 +1233,18 @@ export default function App() {
         isOpen={Boolean(activeProjectModal)}
         onClose={() => setActiveProjectModal(null)}
       />
+
+      {/* Floating Accessible Back to Top Button */}
+      <button
+        ref={backToTopRef}
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="j-back-to-top is-hidden"
+        aria-label="Back to top of page"
+        title="Back to top"
+      >
+        <ArrowUp size={18} />
+      </button>
 
       {/* Interactive Toast Notification */}
       <AnimatePresence>
