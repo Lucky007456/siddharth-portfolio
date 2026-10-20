@@ -962,30 +962,6 @@ button {
   border-radius: var(--rounded-full);
 }
 
-.j-nav-game-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: var(--rounded-full);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  background: rgba(56, 189, 248, 0.08);
-  color: #f8fafc;
-  font-size: 0.775rem;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all var(--transition-fast);
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.j-nav-game-pill:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: #38bdf8;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
 
 .j-next-project-card:hover {
   border-color: var(--accent) !important;

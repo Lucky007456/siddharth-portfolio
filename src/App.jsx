@@ -14,8 +14,7 @@ import {
   Sparkles,
   ChevronRight,
   X,
-  Menu,
-  Gamepad2
+  Menu
 } from 'lucide-react';
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import NeuralGame from './components/NeuralGame';
@@ -496,16 +495,16 @@ export default function App() {
             <nav className="j-nav-links" aria-label="Main Navigation">
               <a href="#works" className="j-nav-link">Selected Works</a>
               <a href="#pillars" className="j-nav-link">Capabilities</a>
-              <button
-                onClick={() => navigateTo('game')}
-                className="j-nav-game-pill"
-                title="Play Synapse Runner Minigame"
-              >
-                <Gamepad2 size={13} color="#38bdf8" />
-                <span>Play Game</span>
-              </button>
               <a href="#about" className="j-nav-link">About</a>
               <a href="#credentials" className="j-nav-link">Credentials</a>
+              <button
+                type="button"
+                onClick={() => navigateTo('game')}
+                className="j-nav-link"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0 }}
+              >
+                Play Game
+              </button>
               <a href="#contact" className="j-nav-link">Contact</a>
             </nav>
 
@@ -565,19 +564,18 @@ export default function App() {
               <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
                 <a href="#works" onClick={() => setMobileMenuOpen(false)}>Selected Works</a>
                 <a href="#pillars" onClick={() => setMobileMenuOpen(false)}>Capabilities</a>
+                <a href="#about" onClick={() => setMobileMenuOpen(false)}>About & Education</a>
+                <a href="#credentials" onClick={() => setMobileMenuOpen(false)}>Credentials</a>
                 <button
+                  type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     navigateTo('game');
                   }}
-                  className="j-nav-game-pill"
-                  style={{ alignSelf: 'flex-start', padding: '0.45rem 1rem', fontSize: '0.85rem' }}
+                  style={{ background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', font: 'inherit', color: 'inherit', padding: 0 }}
                 >
-                  <Gamepad2 size={15} color="#38bdf8" />
-                  <span>Play Game (Synapse Runner)</span>
+                  Play Game
                 </button>
-                <a href="#about" onClick={() => setMobileMenuOpen(false)}>About & Education</a>
-                <a href="#credentials" onClick={() => setMobileMenuOpen(false)}>Credentials</a>
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
               </nav>
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
@@ -647,10 +645,9 @@ export default function App() {
               <button
                 onClick={() => navigateTo('game')}
                 className="j-btn-outline"
-                style={{ borderColor: 'rgba(56, 189, 248, 0.4)', background: 'rgba(56, 189, 248, 0.05)' }}
                 title="Launch Synapse Protocol Mini-Game"
               >
-                <Gamepad2 size={14} color="#38bdf8" /> Play Synapse Runner
+                Play Game
               </button>
               <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className="j-btn-outline">
                 <Code2 size={14} /> GitHub ↗
