@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId, useMemo } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe,
@@ -175,141 +175,6 @@ const SKILL_MATRIX = [
   { category: "Frameworks & Tools", items: ["Scikit-Learn", "PyTorch Basics", "Pandas & NumPy", "React.js", "Tailwind CSS", "Vite", "Git & GitHub", "Vercel"] },
   { category: "Practices & Concepts", items: ["Data Preprocessing", "Model Benchmarking", "Responsive UI Design", "Interactive Visualizations", "Cross-Validation", "Ethical AI"] }
 ];
-
-/* ==========================================================================
-   INTERACTIVE CLIENT-SIDE EXPERIMENT: LIVE TEXT PROVENANCE PROBE
-   ========================================================================== */
-
-function LiveTextProbe() {
-  const SAMPLES = {
-    human: "I spent the weekend analyzing classical SVM decision boundaries on synthetic text datasets. The mathematical separation of hyperplanes in high dimensions has always fascinated me because simple geometric intuition yields remarkably resilient real-world classification.",
-    ai: "Machine learning architectures are fundamentally computational frameworks designed to optimize predictive algorithms through recursive statistical evaluation across extensive multi-dimensional parameters and standardized feature vectors."
-  };
-
-  const [text, setText] = useState(SAMPLES.human);
-
-  const metrics = useMemo(() => {
-    const trimmed = text.trim();
-    if (!trimmed) return { words: 0, sentences: 0, ttr: 0, avgLen: 0, humanProb: 50 };
-    const words = trimmed.toLowerCase().match(/\b[a-z0-9'-]+\b/g) || [];
-    const sentences = trimmed.split(/[.!?]+/).filter(Boolean);
-    const uniqueWords = new Set(words);
-    const ttr = words.length > 0 ? Math.round((uniqueWords.size / words.length) * 100) : 0;
-    const avgLen = sentences.length > 0 ? Math.round((words.length / sentences.length) * 10) / 10 : 0;
-
-    // Client-side statistical heuristic probe (Lexical density & syntactic variance)
-    let score = 50;
-    if (ttr > 75) score += 18;
-    else if (ttr < 55) score -= 15;
-
-    const commaCount = (trimmed.match(/,/g) || []).length;
-    if (commaCount > 2) score += 8;
-
-    // Check personal pronouns and informal punctuation (human signals)
-    const personalPronouns = (trimmed.match(/\b(i|my|me|we|our|myself)\b/gi) || []).length;
-    if (personalPronouns > 0) score += 20;
-
-    // Check overly structured AI transition words
-    const aiKeywords = (trimmed.match(/\b(fundamentally|furthermore|consequently|comprehensive|standardized|frameworks)\b/gi) || []).length;
-    if (aiKeywords > 0) score -= 22;
-
-    const humanProb = Math.min(Math.max(score, 5), 95);
-    return {
-      words: words.length,
-      sentences: sentences.length,
-      ttr,
-      avgLen,
-      humanProb
-    };
-  }, [text]);
-
-  return (
-    <div className="j-experiment-box">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--line)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-        <div>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--accent)', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>
-            Interactive Probe // Experiment 01
-          </span>
-          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', fontWeight: 700, color: 'var(--ink)' }}>
-            Real-Time Text Provenance Analyzer
-          </h3>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <button
-            onClick={() => setText(SAMPLES.human)}
-            className="j-btn-outline"
-            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
-          >
-            Load Human Sample
-          </button>
-          <button
-            onClick={() => setText(SAMPLES.ai)}
-            className="j-btn-outline"
-            style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
-          >
-            Load Synthetic Sample
-          </button>
-        </div>
-      </div>
-
-      <div className="j-probe-grid">
-        <div>
-          <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--muted-2)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-            Input Text Corpus (Live Inference)
-          </label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="j-probe-textarea"
-            placeholder="Type or paste any English text snippet to test the real-time lexical analyzer..."
-          />
-        </div>
-
-        <div className="j-probe-metrics">
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--muted)', textTransform: 'uppercase' }}>
-                Classification Prediction
-              </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', fontWeight: 700, color: metrics.humanProb >= 50 ? '#34d399' : '#f87171' }}>
-                {metrics.humanProb >= 50 ? `Human Style (${metrics.humanProb}%)` : `Synthetic Style (${100 - metrics.humanProb}%)`}
-              </span>
-            </div>
-
-            <div className="j-metric-bar-bg">
-              <div
-                className="j-metric-bar-fill"
-                style={{
-                  width: `${metrics.humanProb}%`,
-                  background: metrics.humanProb >= 50 ? '#34d399' : '#f87171'
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBlock: '1.25rem' }}>
-            <div className="j-metric-row">
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Lexical Diversity (Type-Token Ratio)</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.ttr}%</span>
-            </div>
-            <div className="j-metric-row">
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Average Sentence Length</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.avgLen} words</span>
-            </div>
-            <div className="j-metric-row">
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--muted)' }}>Total Word Count</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.825rem', fontWeight: 600, color: 'var(--ink)' }}>{metrics.words}</span>
-            </div>
-          </div>
-
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--muted-2)', lineHeight: 1.5 }}>
-            * This client-side probe evaluates lexical entropy and syntactic variance heuristics modeled after the feature pipeline used in Siddharth's AI text detection system.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ==========================================================================
    CASE STUDY DETAIL MODAL
@@ -535,7 +400,6 @@ export default function App() {
             <nav className="j-nav-links" aria-label="Main Navigation">
               <a href="#works" className="j-nav-link">Selected Works</a>
               <a href="#pillars" className="j-nav-link">Capabilities</a>
-              <a href="#experiments" className="j-nav-link">AI Probe</a>
               <a href="#about" className="j-nav-link">About</a>
               <a href="#credentials" className="j-nav-link">Credentials</a>
               <a href="#contact" className="j-nav-link">Contact</a>
@@ -597,7 +461,6 @@ export default function App() {
               <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-heading)', fontSize: '1.1rem' }}>
                 <a href="#works" onClick={() => setMobileMenuOpen(false)}>Selected Works</a>
                 <a href="#pillars" onClick={() => setMobileMenuOpen(false)}>Capabilities</a>
-                <a href="#experiments" onClick={() => setMobileMenuOpen(false)}>AI Probe</a>
                 <a href="#about" onClick={() => setMobileMenuOpen(false)}>About & Education</a>
                 <a href="#credentials" onClick={() => setMobileMenuOpen(false)}>Credentials</a>
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
@@ -867,24 +730,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* ====================================================================
-          TECHNICAL PLAYGROUND / LIVE EXPERIMENT
-          ==================================================================== */}
-      <section id="experiments" className="j-section">
-        <div className="j-container">
-          <div className="j-section-header">
-            <span className="j-section-sub">Interactive Systems</span>
-            <h2 className="j-section-title">
-              Technical Experiments
-            </h2>
-            <p className="j-section-desc">
-              Test algorithms right in the browser. A client-side demonstration of stylistic entropy, lexical richness, and classification heuristics.
-            </p>
-          </div>
-
-          <LiveTextProbe />
-        </div>
-      </section>
 
       {/* ====================================================================
           ABOUT ME & ACADEMIC BACKGROUND

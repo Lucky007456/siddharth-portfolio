@@ -763,76 +763,7 @@ button {
   color: #34d399;
 }
 
-/* ==========================================================================
-   TECHNICAL PLAYGROUND & EXPERIMENTS
-   ========================================================================== */
-.j-experiment-box {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--rounded-lg);
-  padding: clamp(2rem, 4vw, 3.5rem);
-  margin-top: 2rem;
-}
 
-.j-probe-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 1.5rem;
-}
-
-.j-probe-textarea {
-  width: 100%;
-  background: #09090b;
-  border: 1px solid var(--line);
-  border-radius: var(--rounded-sm);
-  padding: 1rem;
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  resize: vertical;
-  min-height: 160px;
-  outline: none;
-  transition: border-color var(--transition-fast);
-}
-
-.j-probe-textarea:focus {
-  border-color: var(--accent);
-}
-
-.j-probe-metrics {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: #09090b;
-  border: 1px solid var(--line);
-  border-radius: var(--rounded-sm);
-  padding: 1.25rem;
-}
-
-.j-metric-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-block: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.j-metric-bar-bg {
-  width: 100%;
-  height: 6px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  margin-top: 0.5rem;
-}
-
-.j-metric-bar-fill {
-  height: 100%;
-  background: var(--ink);
-  transition: width 0.3s ease;
-}
 
 /* ==========================================================================
    ABOUT & CREDENTIALS
@@ -1007,9 +938,6 @@ button {
     min-height: 280px;
   }
 
-  .j-probe-grid {
-    grid-template-columns: 1fr;
-  }
 
   .j-about-grid {
     grid-template-columns: 1fr;
